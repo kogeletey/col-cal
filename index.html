@@ -5,15 +5,22 @@
         <link rel="icon" type="image/svg+xml" href="/vite.svg" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Vite + Lit + TS</title>
-        <script type="module" src="/src/wa-calendar.ts"></script>
+        <script type="module" src="/src/col-cal.ts"></script>
     </head>
     <body>
-        <wa-calendar
-            view="week"
+        <col-cal
             locale="ru"
-            date="Date.now()"
             @update:date="handleDateChange"
             @update:selectedDate="handleSelect"
-        ></wa-calendar>
+        ></col-cal>
     </body>
+    <script>
+        customElements.whenDefined("col-cal").then(() => {
+            const calendar = document.querySelector("col-cal");
+            if (calendar) {
+                const date = Date.now();
+                calendar.setAttribute("date", date);
+            }
+        });
+    </script>
 </html>
