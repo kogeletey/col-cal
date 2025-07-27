@@ -1,256 +1,217 @@
 import { LitElement, html, css } from "lit";
-import { property, customElement, state } from "lit/decorators.js";
-import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  eachDayOfInterval,
-  isSameDay,
-  addDays,
-  type Locale,
-  type Day,
-  addMonths,
-  subMonths,
-  subDays,
-} from "date-fns";
-import { enUS, ru } from "date-fns/locale";
-import { getDay, isSameMonth } from "date-fns/fp";
-
-const LOCALE_MAP: Record<string, Locale> = {
-  "en-US": enUS,
-  // prettier-ignore
-  'ru': ru,
-};
+import { property, state, customElement } from "lit/decorators.js";
+import "@awesome.me/webawesome/dist/components/popup/popup.js";
+import "./col-cal-header";
+import "./col-cal-dates";
+import "./col-cal-months";
+import "./col-cal-years";
 
 @customElement("col-cal")
 export class ColCal extends LitElement {
-  @property({ type: Object })
-  date: Date = new Date();
-
-  @state()
-  private _date: Date = this.date;
-
+  @property({ type: Date }) date: Date = new Date();
   @property({ type: String }) locale: string = "en-US";
-  @property({ type: Number }) firstDayOfWeek: Day = 1;
+  @property({ type: Number }) firstDayOfWeek: number = 1;
   @property({ type: Array }) disabledDates: Date[] = [];
   @property({ type: Object }) selectedDate: Date | null = null;
   @property({ type: Array }) events: Array<{ date: Date; title: string }> = [];
 
-  static get styles() {
-    return css`
-      :host {
-        --calendar-bg: #ffffff;
-        --calendar-border: #e0e0e0;
-        --calendar-selected-bg: #007bff;
-        --calendar-selected-color: #ffffff;
-        --calendar-hover-bg: #f0f0f0;
-        --event-marker-color: #ff4081;
-        --week-number-color: #666666;
-        --day-header-color: #333333;
-        --disabled-date-color: #cccccc;
-        --font-family: "Arial", sans-serif;
-        --font-size: 14px;
-        --padding: 16px;
-        --spacing: 4px;
-      }
+  @state()
+  private _date: Date = this.date;
+  private _month: Date = this.date;
+  @state() private showMonthsPopup: boolean = false;
+  @state() private showYearsPopup: boolean = false;
+  @state() private selectedMonth: string = "";
+  @state() private selectedYear: string = "";
 
-      .calendar {
-        background: var(--calendar-bg);
-        border: 1px solid var(--calendar-border);
-        font-family: var(--font-family);
-        font-size: var(--font-size);
-        padding: var(--padding);
-      }
-
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--spacing);
-      }
-
-      .nav-button {
-        background: none;
-        border: none;
-        font-size: 1.2em;
-        cursor: pointer;
-      }
-
-      .nav-button:disabled {
-        opacity: 0.5;
-      }
-
-      .week {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: var(--spacing);
-        margin-bottom: var(--spacing);
-      }
-
-      .day-header {
-        text-align: center;
-        color: var(--day-header-color);
-      }
-
-      .day {
-        text-align: center;
-        padding: 4px;
-        apperance: none;
-        border: 0;
-        outline: 0;
-        background: transparent;
-        cursor: pointer;
-        position: relative;
-      }
-
-      .day:hover {
-        background: var(--calendar-hover-bg);
-      }
-
-      .day.selected {
-        background: var(--calendar-selected-bg);
-        color: var(--calendar-selected-color);
-      }
-
-      .day.disabled {
-        color: var(--disabled-date-color);
-        cursor: default;
-      }
-
-      .event-marker {
-        position: absolute;
-        bottom: 4px;
-        right: 4px;
-        width: 6px;
-        height: 6px;
-        background: var(--event-marker-color);
-        border-radius: 50%;
-      }
-
-      .week-number {
-        color: var(--week-number-color);
-        text-align: right;
-      }
-    `;
-  }
-
-  private getPrevMonthDays(): Date[] {
-    const start = startOfMonth(this._date);
-    const firstDay = getDay(start);
-    const daysBefore = (firstDay - this.firstDayOfWeek + 7) % 7;
-    const prevMonthStart = subDays(start, daysBefore);
-    return eachDayOfInterval({
-      start: prevMonthStart,
-      end: subDays(start, 1),
-    });
-  }
-
-  private getNextMonthDays(): Date[] {
-    const end = endOfMonth(this._date);
-    const nextDay = addDays(end, 1);
-    const lastDay = getDay(nextDay);
-    const daysAfter = (7 - ((lastDay - this.firstDayOfWeek + 7) % 7)) % 7;
-    const nextMonthStart = addDays(end, 1);
-    const nextMonthEnd = addDays(nextMonthStart, daysAfter - 1);
-    return eachDayOfInterval({
-      start: nextMonthStart,
-      end: nextMonthEnd,
-    });
-  }
-
-  private getMonthDays() {
-    const currentMonthDays = eachDayOfInterval({
-      start: startOfMonth(this._date),
-      end: endOfMonth(this._date),
-    });
-
-    this.disabledDates = [
-      ...this.getPrevMonthDays(),
-      ...this.getNextMonthDays(),
-    ];
-
-    return [
-      ...this.getPrevMonthDays(),
-      ...currentMonthDays,
-      ...this.getNextMonthDays(),
-    ];
-  }
-
-  private currentLocale() {
-    return LOCALE_MAP[this.locale] || enUS;
-  }
-
-  private isDateDisabled(date: Date) {
-    return this.disabledDates.some((d) => isSameDay(date, d));
-  }
-
-  private handleDateSelect(date: Date) {
-    if (!this.isDateDisabled(date)) {
-      this.selectedDate = date;
-      this.dispatchEvent(new CustomEvent("date-selected", { detail: date }));
+  static styles = css`
+    :host {
+      --calendar-bg: #ffffff;
+      --calendar-border: #e0e0e0;
+      --calendar-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: inline-block;
     }
+
+    .calendar {
+      background: var(--calendar-bg);
+      border: 1px solid var(--calendar-border);
+      border-radius: 8px;
+      box-shadow: var(--calendar-shadow);
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      position: relative;
+    }
+
+    wa-popup {
+      --popup-background: var(--calendar-bg);
+      --popup-border: var(--calendar-border);
+      --popup-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --popup-border-radius: 8px;
+    }
+  `;
+
+  private get currentLocale(): "en" | "ru" {
+    return this.locale.startsWith("ru") ? "ru" : "en";
+  }
+
+  private handleDateSelected(e: CustomEvent) {
+    this.selectedDate = e.detail;
+    this.dispatchEvent(
+      new CustomEvent("date-selected", {
+        detail: this.selectedDate,
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private toggleMonthsPopup() {
+    this.showMonthsPopup = !this.showMonthsPopup;
+    this.showYearsPopup = false;
+  }
+
+  private toggleYearsPopup() {
+    this.showYearsPopup = !this.showYearsPopup;
+    this.showMonthsPopup = false;
+  }
+
+  private closePopups() {
+    this.showMonthsPopup = false;
+    this.showYearsPopup = false;
+  }
+
+  private handleMonthSelected(e: CustomEvent) {
+    const monthName = e.detail.month;
+    const monthIndex = this.getMonthIndex(monthName);
+    const newDate = new Date(this._date.getFullYear(), monthIndex, 1);
+    this._date = newDate;
+    this.closePopups();
+  }
+
+  private handleYearSelected(e: CustomEvent) {
+    const year = parseInt(e.detail.year);
+    const newDate = new Date(year, this._date.getMonth(), 1);
+    this._date = newDate;
+    this.closePopups();
+  }
+
+  private getMonthIndex(monthName: string): number {
+    const months =
+      this.currentLocale === "ru"
+        ? [
+            "Янв",
+            "Фев",
+            "Мар",
+            "Апр",
+            "Май",
+            "Июн",
+            "Июл",
+            "Авг",
+            "Сен",
+            "Окт",
+            "Ноя",
+            "Дек",
+          ]
+        : [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
+
+    return months.indexOf(monthName);
+  }
+
+  private formatMonthYear(date: Date): string {
+    const monthNames =
+      this.currentLocale === "ru"
+        ? [
+            "Январь",
+            "Февраль",
+            "Март",
+            "Апрель",
+            "Май",
+            "Июнь",
+            "Июль",
+            "Август",
+            "Сентябрь",
+            "Октябрь",
+            "Ноябрь",
+            "Декабрь",
+          ]
+        : [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ];
+
+    return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
   }
 
   render() {
-    const days = this.getMonthDays();
     return html`
-      <div class="calendar" part="base">
-        <div class="header" part="header">
-          <div>
-            <slot name="header-date">
-              ${format(this._date, "MMMM yyyy", {
-                locale: this.currentLocale(),
-              })}
-            </slot>
-          </div>
-          <div>
-            <button
-              part="left-button"
-              class="nav-button"
-              @click=${() => (this._date = subMonths(this._date, 1))}
-            >
-              <slot name="icon-left-button"> &lt; </slot>
-            </button>
-            <button
-              class="nav-button"
-              part="right-button"
-              @click=${() => (this._date = addMonths(this._date, 1))}
-            >
-              <slot name="icon-right-button"> &gt; </slot>
-            </button>
-          </div>
-        </div>
+      <div class="calendar">
+        <col-cal-header
+          .date=${this._date}
+          .locale=${this.locale}
+          @change-month=${({ detail }: { detail: Date }) => {
+            this._month = detail as Date;
+          }}
+          @click-month=${this.toggleMonthsPopup}
+          @click-year=${this.toggleYearsPopup}
+        >
+        </col-cal-header>
 
-        <div class="week">
-          ${["П", "В", "C", "Ч", "П", "C", "В"].map(
-            (day) => html`<div class="day-header">${day}</div>`,
-          )}
-        </div>
-        <div class="week">
-          ${days.map((date) => {
-            const isSelected =
-              this.selectedDate !== null
-                ? this.selectedDate && isSameDay(date, this.selectedDate)
-                : isSameMonth(date, new Date(this.date)) &&
-                  isSameDay(date, new Date(this.date));
+        <col-cal-dates
+          .date=${this._date}
+          .month=${this._month}
+          locale=${this.locale}
+          .firstDayOfWeek=${this.firstDayOfWeek}
+          .disabledDates=${this.disabledDates}
+          .selectedDate=${this.selectedDate}
+          .events=${this.events}
+          @date-selected=${this.handleDateSelected}
+        ></col-cal-dates>
 
-            const isDisabled = this.isDateDisabled(date);
-            return html`
-              <button
-                class="day ${isSelected ? "selected" : ""} ${isDisabled
-                  ? "disabled"
-                  : ""}"
-                @click=${() => this.handleDateSelect(date)}
-                aria-label=${format(date, "PPP", {
-                  locale: this.currentLocale(),
-                })}
-                role="gridcell"
-              >
-                ${date.getDate()}
-              </button>
-            `;
-          })}
-        </div>
+        <wa-popup active=${this.showMonthsPopup} position="top">
+          <col-cal-months
+            slot="content"
+            .selectedMonth=${this.selectedMonth}
+            locale=${this.currentLocale}
+            @month-selected=${this.handleMonthSelected}
+          ></col-cal-months>
+        </wa-popup>
+
+        <!--
+        <wa-popup
+          .open=${this.showYearsPopup}
+          position="bottom-start"
+          @close=${this.closePopups}
+        >
+          <col-cal-years
+            slot="content"
+            .selectedYear=${this.selectedYear}
+            .language=${this.currentLocale}
+            @year-selected=${this.handleYearSelected}
+          ></col-cal-years>
+        </wa-popup>
+        -->
       </div>
     `;
   }
