@@ -1,72 +1,45 @@
 import { LitElement, html, css } from "lit";
-import { property, customElement, state } from "lit/decorators.js";
+import { property, customElement } from "lit/decorators.js";
 import {
-  format,
-  startOfMonth,
-  endOfMonth,
-  eachDayOfInterval,
-  isSameDay,
-  addDays,
-  type Day,
-  subDays,
+    format,
+    startOfMonth,
+    endOfMonth,
+    eachDayOfInterval,
+    isSameDay,
+    addDays,
+    type Day,
+    subDays,
 } from "date-fns";
 import { getDay, isSameMonth } from "date-fns/fp";
 import { LocaleUtils } from "./locale-utils";
 
 @customElement("col-cal-dates")
 export class ColCalDate extends LitElement {
-  @property({ type: Date })
-  date: Date = new Date();
-  month: Date = new Date();
+    @property({ type: Date })
+    month: Date | null = null;
 
-  @property({ type: String }) locale: string = "en-US";
-  @property({ type: Number }) firstDayOfWeek: Day = 1;
-  @property({ type: Array }) disabledDates: Date[] = [];
-  @property({ type: Object }) selectedDate: Date | null = null;
-  @property({ type: Array }) events: Array<{ date: Date; title: string }> = [];
+    @property({ type: Date })
+    selectedDate: Date | null = null;
 
-  static get styles() {
-    return css`
+    @property({ type: String }) locale: string = "en-US";
+    @property({ type: Number }) firstDayOfWeek: Day = 1;
+    @property({ type: Array }) disabledDates: Date[] = [];
+    @property({ type: Array })
+    events: Array<{ date: Date; title: string }> = [];
+
+    static get styles() {
+        return css`
       :host {
-        --calendar-bg: #ffffff;
+        --col-cal-day-bg: #ffffff;
         --calendar-border: #e0e0e0;
-        --calendar-selected-bg: #007bff;
-        --calendar-selected-color: #ffffff;
-        --calendar-hover-bg: #f0f0f0;
-        --event-marker-color: #ff4081;
-        --week-number-color: #666666;
-        --day-header-color: #333333;
+        --col-cal-day-selected-bg: #007bff;
+        --col-cal-day-selected-color: #ffffff;
+        --col-cal-day-hover-bg: #f0f0f0;
         --disabled-date-color: #cccccc;
         --font-family: "Arial", sans-serif;
         --font-size: 14px;
         --padding: 16px;
         --spacing: 4px;
-      }
-
-      .calendar {
-        background: var(--calendar-bg);
-        border: 1px solid var(--calendar-border);
-        font-family: var(--font-family);
-        font-size: var(--font-size);
-        padding: var(--padding);
-      }
-
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: var(--spacing);
-      }
-
-      .nav-button {
-        background: none;
-        border: none;
-        font-size: 1.2em;
-        cursor: pointer;
-      }
-
-      .nav-button:disabled {
-        opacity: 0.5;
       }
 
       .week {
@@ -93,125 +66,121 @@ export class ColCalDate extends LitElement {
       }
 
       .day:hover {
-        background: var(--calendar-hover-bg);
+        background: var(--col-cal-day-hover-bg);
       }
 
       .day.selected {
-        background: var(--calendar-selected-bg);
-        color: var(--calendar-selected-color);
+        background: var(--col-cal-day-selected-bg);
+        color: var(--col-cal-day-selected-color);
       }
 
       .day.disabled {
         color: var(--disabled-date-color);
         cursor: default;
       }
-
-      .event-marker {
-        position: absolute;
-        bottom: 4px;
-        right: 4px;
-        width: 6px;
-        height: 6px;
-        background: var(--event-marker-color);
-        border-radius: 50%;
-      }
-
-      .week-number {
-        color: var(--week-number-color);
-        text-align: right;
-      }
     `;
-  }
-
-  private getPrevMonthDays(): Date[] {
-    const start = startOfMonth(this.month);
-    const firstDay = getDay(start);
-    const daysBefore = (firstDay - this.firstDayOfWeek + 7) % 7;
-    const prevMonthStart = subDays(start, daysBefore);
-    return eachDayOfInterval({
-      start: prevMonthStart,
-      end: subDays(start, 1),
-    });
-  }
-
-  private getNextMonthDays(): Date[] {
-    const end = endOfMonth(this.month);
-    const nextDay = addDays(end, 1);
-    const lastDay = getDay(nextDay);
-    const daysAfter = (7 - ((lastDay - this.firstDayOfWeek + 7) % 7)) % 7;
-    const nextMonthStart = addDays(end, 1);
-    const nextMonthEnd = addDays(nextMonthStart, daysAfter - 1);
-    return eachDayOfInterval({
-      start: nextMonthStart,
-      end: nextMonthEnd,
-    });
-  }
-
-  private getMonthDays() {
-    const currentMonthDays = eachDayOfInterval({
-      start: startOfMonth(this.month),
-      end: endOfMonth(this.month),
-    });
-
-    this.disabledDates = [
-      ...this.getPrevMonthDays(),
-      ...this.getNextMonthDays(),
-    ];
-
-    return [
-      ...this.getPrevMonthDays(),
-      ...currentMonthDays,
-      ...this.getNextMonthDays(),
-    ];
-  }
-
-  private isDateDisabled(date: Date) {
-    return this.disabledDates.some((d) => isSameDay(date, d));
-  }
-
-  private handleDateSelect(date: Date) {
-    if (!this.isDateDisabled(date)) {
-      this.selectedDate = date;
-      this.dispatchEvent(new CustomEvent("date-selected", { detail: date }));
     }
-  }
 
-  render() {
-    const days = this.getMonthDays();
-    return html`
-      <div class="calendar" part="base">
-        <div class="week">
-          ${days.map((date) => {
-            const isSelected =
-              this.selectedDate !== null
-                ? this.selectedDate && isSameDay(date, this.selectedDate)
-                : isSameMonth(date, new Date(this.date)) &&
-                  isSameDay(date, new Date(this.date));
+    private getPrevMonthDays(month: Date): Date[] {
+        const start = startOfMonth(month);
+        const firstDay = getDay(start);
+        const daysBefore = (firstDay - this.firstDayOfWeek + 7) % 7;
+        if (daysBefore === 0) {
+            return [];
+        }
+        const prevMonthStart = subDays(start, daysBefore);
+        return eachDayOfInterval({
+            start: prevMonthStart,
+            end: subDays(start, 1),
+        });
+    }
 
-            const isDisabled = this.isDateDisabled(date);
+    private getNextMonthDays(month: Date): Date[] {
+        const end = endOfMonth(month);
+        const nextMonthStart = addDays(end, 1);
+        const firstDayOfNext = getDay(nextMonthStart);
+
+        const daysAfter =
+            (7 - ((firstDayOfNext - this.firstDayOfWeek + 7) % 7)) % 7;
+
+        if (daysAfter === 0) {
+            return [];
+        }
+
+        const nextMonthEnd = addDays(nextMonthStart, daysAfter - 1);
+
+        return eachDayOfInterval({
+            start: nextMonthStart,
+            end: nextMonthEnd,
+        });
+    }
+
+    private getMonthDays() {
+        if (!this.month) return null;
+
+        const month = this.month;
+        const currentMonthDays = eachDayOfInterval({
+            start: startOfMonth(month),
+            end: endOfMonth(month),
+        });
+
+        this.disabledDates = [
+            ...this.getPrevMonthDays(month),
+            ...this.getNextMonthDays(month),
+        ];
+
+        return [
+            ...this.getPrevMonthDays(month),
+            ...currentMonthDays,
+            ...this.getNextMonthDays(month),
+        ];
+    }
+
+    private isDateDisabled(date: Date) {
+        return this.disabledDates.some((d) => isSameDay(date, d));
+    }
+
+    private handleDateSelect(date: Date) {
+        if (!this.isDateDisabled(date)) {
+            this.selectedDate = date;
+            this.dispatchEvent(new CustomEvent("date-selected", { detail: date }));
+        }
+    }
+
+    render() {
+        const days = this.getMonthDays();
+        if (days) {
             return html`
-              <button
-                class="day ${isSelected ? "selected" : ""} ${isDisabled
-                  ? "disabled"
-                  : ""}"
-                @click=${() => this.handleDateSelect(date)}
-                aria-label=${format(date, "PPP", {
-                  locale: new LocaleUtils(this.locale).currentLocale(),
-                })}
-                role="gridcell"
-              >
-                ${date.getDate()}
-              </button>
-            `;
-          })}
-        </div>
-      </div>
-    `;
-  }
+          <div class="week">
+            ${days.map((date) => {
+                const isSelected =
+                    isSameMonth(date, this.selectedDate as Date) &&
+                    isSameDay(date, this.selectedDate as Date);
+
+                const isDisabled = this.isDateDisabled(date);
+                return html`
+                <button
+                  class="day ${isSelected ? "selected" : ""} ${isDisabled
+                        ? "disabled"
+                        : ""}"
+                  @click=${() => this.handleDateSelect(date)}
+                  aria-label=${format(date, "PPP", {
+                            locale: new LocaleUtils(this.locale).currentLocale(),
+                        })}
+                  role="gridcell"
+                >
+                  ${date.getDate()}
+                </button>
+              `;
+            })}
+          </div>
+      `;
+        }
+    }
 }
 
 declare global {
-  interface HTMLElementTagNameMap {
-    "col-cal-date": ColCalDate;
-  }
+    interface HTMLElementTagNameMap {
+        "col-cal-date": ColCalDate;
+    }
 }

@@ -8,14 +8,8 @@ export class ColCalYears extends LitElement {
   @property({ type: Number }) currentPage = 0;
 
   // Configuration for year range
-  private startYear = 1950;
+  private startYear = 2005;
   private endYear = 2023;
-
-  // Translations for labels
-  private translations = {
-    en: { prev: "Previous", next: "Next", label: "Year" },
-    ru: { prev: "Предыдущий", next: "Следующий", label: "Год" },
-  };
 
   // Generate full list of years
   private get fullYears() {
@@ -38,11 +32,16 @@ export class ColCalYears extends LitElement {
     return css`
       .year-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
         gap: 10px;
         padding: 10px;
-        font-family: Arial, sans-serif;
+        background: #fff;
       }
+
+      .years {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        }
 
       .year-cell {
         padding: 15px;
@@ -61,7 +60,7 @@ export class ColCalYears extends LitElement {
 
       .navigation {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         margin: 10px 0;
       }
 
@@ -89,21 +88,18 @@ export class ColCalYears extends LitElement {
   render() {
     return html`
       <div class="year-grid">
-        <div class="label">${this.translations[this.language].label}</div>
-
         <div class="navigation">
           <button @click=${this.handlePrev} ?disabled=${this.currentPage === 0}>
-            ${this.translations[this.language].prev}
           </button>
 
           <button
             @click=${this.handleNext}
             ?disabled=${this.currentPage === this.totalPages - 1}
           >
-            ${this.translations[this.language].next}
           </button>
         </div>
 
+        <div class="years">
         ${this.pageYears.map(
           (year) =>
             html`<div
@@ -114,6 +110,8 @@ export class ColCalYears extends LitElement {
               ${year}
             </div>`,
         )}
+          </div>
+
       </div>
     `;
   }

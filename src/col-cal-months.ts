@@ -1,41 +1,12 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import type { MonthNumber } from "./col-cal.type.ts";
+import { months } from "./date-utils.ts";
 
 @customElement("col-cal-months")
 export class ColCalMonths extends LitElement {
-  @property({ type: String }) selectedMonth = "";
+  @property({ type: Number }) selectedMonth: MonthNumber | null = null;
   @property({ type: String }) locale: "en" | "ru" = "en";
-
-  private translations = {
-    en: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
-    ru: [
-      "Янв",
-      "Фев",
-      "Мар",
-      "Апр",
-      "Май",
-      "Июн",
-      "Июл",
-      "Авг",
-      "Сен",
-      "Окт",
-      "Ноя",
-      "Дек",
-    ],
-  };
 
   static get styles() {
     return css`
@@ -44,6 +15,8 @@ export class ColCalMonths extends LitElement {
         grid-template-columns: repeat(4, 1fr);
         gap: 10px;
         padding: 10px;
+        background: var(--calendar-bg);
+        border: 1px solid #ccc;
         font-family: Arial, sans-serif;
       }
 
@@ -64,34 +37,39 @@ export class ColCalMonths extends LitElement {
     `;
   }
 
-  render() {
+  private getFromIndexMonth(month: string): MonthNumber {
+    return months[this.locale].indexOf(month) as MonthNumber;
+  }
+
+  private isSelected(month: string): boolean {
+    return this.selectedMonth === this.getFromIndexMonth(month);
+  }
+
+  private handleMonthSelect(month: string) {
+    this.dispatchEvent(
+      new CustomEvent("change-month", {
+        detail: { month: this.getFromIndexMonth(month) },
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  protected render() {
     return html`
       <div class="month-grid">
-        ${this.translations[this.locale].map(
-          (month) =>
+        ${months[this.locale].map(
+          (month: string) =>
             html`<div
-              class="month-cell ${this.selectedMonth === month
-                ? "selected"
-                : ""}"
+              class="month-cell ${this.isSelected(month) ? "selected" : ""}"
               @click=${() => this.handleMonthSelect(month)}
-              aria-selected=${this.selectedMonth === month}
+              aria-selected=${this.isSelected(month)}
             >
               ${month}
             </div>`,
         )}
       </div>
     `;
-  }
-
-  handleMonthSelect(month: string) {
-    this.selectedMonth = month;
-    this.dispatchEvent(
-      new CustomEvent("month-selected", {
-        detail: { month: this.selectedMonth },
-        bubbles: true,
-        composed: true,
-      }),
-    );
   }
 }
 declare global {
