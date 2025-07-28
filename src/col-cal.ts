@@ -47,10 +47,16 @@ export class ColCal extends LitElement {
 
   private handleChangeMonth({ detail }: { detail: { month: MonthNumber } }) {
     this._month = createDateFromMonthNumber(detail.month);
-    console.log("get-a-this-month", this._month);
   }
 
-  private handleYearSelected() {}
+  private handleYearSelected({ detail }: { detail: { year: number } }) {
+    this._month = new Date(
+      this._month.getFullYear(),
+      this._month.getMonth(),
+      3,
+    );
+    this._month.setFullYear(detail.year);
+  }
 
   private handleDateSelected(e: CustomEvent) {
     this.date = e.detail;
@@ -79,22 +85,21 @@ export class ColCal extends LitElement {
                 this._month.getUTCMonth(),
               )}
             </button>
-            <button id="open-years-popup">2025</button>
+            <button id="open-years-popup">${this._month.getFullYear()}</button>
           </div>
         </col-cal-header>
 
         <wa-popover position="bottom" for="open-months-popup">
           <col-cal-months
             .selectedMonth=${this._month.getUTCMonth()}
+            .locale=${this.currentLocale}
             @change-month="${this.handleChangeMonth}"
-            locale=${this.currentLocale}
           ></col-cal-months>
         </wa-popover>
         <wa-popover position="bottom" for="open-years-popup">
           <col-cal-years
             .selectedYear=${this._month.getUTCFullYear()}
-            .language=${this.currentLocale}
-            @year-selected=${this.handleYearSelected}
+            @change-year=${this.handleYearSelected}
           ></col-cal-years>
         </wa-popover>
 

@@ -17,7 +17,6 @@ export class ColCalMonths extends LitElement {
         padding: 10px;
         background: var(--calendar-bg);
         border: 1px solid #ccc;
-        font-family: Arial, sans-serif;
       }
 
       .month-cell {

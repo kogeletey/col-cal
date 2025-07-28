@@ -1,32 +1,13 @@
 import { LitElement, html, css } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 
 @customElement("col-cal-years")
 export class ColCalYears extends LitElement {
-  @property({ type: String }) selectedYear = "";
-  @property({ type: String }) language = "en";
-  @property({ type: Number }) currentPage = 0;
+  @property({ type: Number }) selectedYear: number | null = null;
 
-  // Configuration for year range
-  private startYear = 2005;
-  private endYear = 2023;
-
-  // Generate full list of years
-  private get fullYears() {
-    return Array.from({ length: this.endYear - this.startYear + 1 }, (_, i) =>
-      (this.startYear + i).toString(),
-    );
-  }
-
-  private get pageYears() {
-    const start = this.currentPage * 12;
-    const end = start + 12;
-    return this.fullYears.slice(start, end);
-  }
-
-  private get totalPages() {
-    return Math.ceil(this.fullYears.length / 12);
-  }
+  @state()
+  private _startYear: number = 2005;
+  private _chunkSize = 12;
 
   static get styles() {
     return css`
@@ -41,7 +22,7 @@ export class ColCalYears extends LitElement {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 10px;
-        }
+      }
 
       .year-cell {
         padding: 15px;
@@ -61,6 +42,7 @@ export class ColCalYears extends LitElement {
       .navigation {
         display: flex;
         justify-content: center;
+        gap: 10px;
         margin: 10px 0;
       }
 
@@ -85,60 +67,79 @@ export class ColCalYears extends LitElement {
     `;
   }
 
-  render() {
-    return html`
-      <div class="year-grid">
-        <div class="navigation">
-          <button @click=${this.handlePrev} ?disabled=${this.currentPage === 0}>
-          </button>
-
-          <button
-            @click=${this.handleNext}
-            ?disabled=${this.currentPage === this.totalPages - 1}
-          >
-          </button>
-        </div>
-
-        <div class="years">
-        ${this.pageYears.map(
-          (year) =>
-            html`<div
-              class="year-cell ${this.selectedYear === year ? "selected" : ""}"
-              @click=${() => this.handleYearSelect(year)}
-              aria-selected=${this.selectedYear === year}
-            >
-              ${year}
-            </div>`,
-        )}
-          </div>
-
-      </div>
-    `;
+  connectedCallback() {
+    super.connectedCallback();
+    this.initializeStartYear();
   }
 
-  handlePrev() {
-    if (this.currentPage > 0) {
-      this.currentPage--;
+  private initializeStartYear() {
+    let centerYear = 2023;
+    if (this.selectedYear && !isNaN(Number(this.selectedYear))) {
+      centerYear = Number(this.selectedYear);
     }
+
+    this._startYear = centerYear - 3;
   }
 
-  handleNext() {
-    if (this.currentPage < this.totalPages - 1) {
-      this.currentPage++;
-    }
+  private get fullYears() {
+    return Array.from({ length: this._chunkSize }, (_, i) =>
+      (this._startYear + i).toString(),
+    );
   }
 
-  handleYearSelect(year: string) {
+  private handlePrev() {
+    this._startYear -= this._chunkSize;
+  }
+
+  private handleNext() {
+    this._startYear += this._chunkSize;
+  }
+
+  private isSelectedYear(year: string): boolean {
+    return this.selectedYear === Number(year);
+  }
+
+  private handleYearSelect(year: number) {
     this.selectedYear = year;
     this.dispatchEvent(
-      new CustomEvent("year-selected", {
-        detail: { year: this.selectedYear },
+      new CustomEvent("change-year", {
+        detail: { year: year },
         bubbles: true,
         composed: true,
       }),
     );
   }
+
+  protected render() {
+    return html`
+      <div class="year-grid">
+        <div class="navigation">
+          <button @click=${this.handlePrev}>
+            <slot name="icon-left-button"> &lt; </slot>
+          </button>
+
+          <button @click=${this.handleNext}>
+            <slot name="icon-right-button"> &gt; </slot>
+          </button>
+        </div>
+
+        <div class="years">
+          ${this.fullYears.map(
+            (year) =>
+              html`<div
+                class="year-cell ${this.isSelectedYear(year) ? "selected" : ""}"
+                @click=${() => this.handleYearSelect(Number(year))}
+                aria-selected=${this.isSelectedYear(year)}
+              >
+                ${year}
+              </div>`,
+          )}
+        </div>
+      </div>
+    `;
+  }
 }
+
 declare global {
   interface HTMLElementTagNameMap {
     "col-cal-years": ColCalYears;
