@@ -12,18 +12,14 @@
         <script type="module" src="/src/col-cal.ts"></script>
     </head>
     <body>
-        <col-cal
-            locale="ru"
-            @update:date="handleDateChange"
-            @update:selectedDate="handleSelect"
-        ></col-cal>
+        <col-cal locale="ru"></col-cal>
     </body>
     <script>
         customElements.whenDefined("col-cal").then(() => {
             const calendar = document.querySelector("col-cal");
             if (calendar) {
                 const date = new Date();
-                // calendar.setAttribute("date", date);
+                calendar.setAttribute("date", date);
             }
         });
     </script>

@@ -1,4 +1,4 @@
-import { LitElement, html, css } from "lit";
+import { LitElement, html } from "lit";
 import { property, state, customElement } from "lit/decorators.js";
 import "@awesome.me/webawesome/dist/components/popover/popover.js";
 import "./col-cal-header.ts";
@@ -7,6 +7,8 @@ import "./col-cal-months.ts";
 import "./col-cal-years.ts";
 import type { MonthNumber } from "./col-cal.type.ts";
 import { createDateFromMonthNumber, months } from "./date-utils.ts";
+import { createRef, ref, type Ref } from "lit/directives/ref.js";
+import type WaPopover from "@awesome.me/webawesome/dist/components/popover/popover.js";
 
 @customElement("col-cal")
 export class ColCal extends LitElement {
@@ -19,34 +21,25 @@ export class ColCal extends LitElement {
   @state()
   private _month: Date = this.date;
 
-  static styles = css`
-    :host {
-      --calendar-bg: #ffffff;
-      --calendar-border: #e0e0e0;
-      --calendar-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      display: inline-block;
-    }
-
-    .calendar {
-      position: relative;
-      overflow: hidden;
-      background: var(--calendar-bg);
-      border: 1px solid var(--calendar-border);
-      border-radius: var(--col-cal-border-radius, 8px);
-      padding: 10px;
-    }
-
-    wa-popover {
-      --arrow-size: 0;
-    }
-  `;
+  private popoverYearsRef: Ref<HTMLElement> = createRef();
+  private popoverMonthsRef: Ref<HTMLElement> = createRef();
 
   private get currentLocale(): "en" | "ru" {
     return this.locale.startsWith("ru") ? "ru" : "en";
   }
 
+  protected createRenderRoot(): HTMLElement | DocumentFragment {
+    return this;
+  }
+
   private handleChangeMonth({ detail }: { detail: { month: MonthNumber } }) {
-    this._month = createDateFromMonthNumber(detail.month);
+    this._month = createDateFromMonthNumber(
+      detail.month,
+      this._month.getFullYear(),
+    );
+    if (this.popoverMonthsRef.value) {
+      (this.popoverMonthsRef.value as WaPopover).hide();
+    }
   }
 
   private handleYearSelected({ detail }: { detail: { year: number } }) {
@@ -56,6 +49,9 @@ export class ColCal extends LitElement {
       3,
     );
     this._month.setFullYear(detail.year);
+    if (this.popoverYearsRef.value) {
+      (this.popoverYearsRef.value as WaPopover).hide();
+    }
   }
 
   private handleDateSelected(e: CustomEvent) {
@@ -71,6 +67,24 @@ export class ColCal extends LitElement {
 
   protected render() {
     return html`
+      <style>
+        .calendar {
+          --calendar-bg: #ffffff;
+          --calendar-border: #e0e0e0;
+          --calendar-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          display: inline-block;
+          position: relative;
+          overflow: hidden;
+          background: var(--calendar-bg);
+          border: 1px solid var(--calendar-border);
+          border-radius: var(--col-cal-border-radius, 8px);
+          padding: 10px;
+        }
+
+        .calendar wa-popover {
+          --arrow-size: 0;
+        }
+      </style>
       <div class="calendar">
         <col-cal-header
           .date=${this._month}
@@ -89,14 +103,22 @@ export class ColCal extends LitElement {
           </div>
         </col-cal-header>
 
-        <wa-popover position="bottom" for="open-months-popup">
+        <wa-popover
+          position="bottom"
+          for="open-months-popup"
+          ${ref(this.popoverMonthsRef)}
+        >
           <col-cal-months
             .selectedMonth=${this._month.getUTCMonth()}
             .locale=${this.currentLocale}
             @change-month="${this.handleChangeMonth}"
           ></col-cal-months>
         </wa-popover>
-        <wa-popover position="bottom" for="open-years-popup">
+        <wa-popover
+          ${ref(this.popoverYearsRef)}
+          position="bottom"
+          for="open-years-popup"
+        >
           <col-cal-years
             .selectedYear=${this._month.getUTCFullYear()}
             @change-year=${this.handleYearSelected}
