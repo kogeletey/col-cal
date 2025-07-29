@@ -9,18 +9,19 @@
 
 To use this project, you need to install the necessary dependencies. You can do this using npm or yarn.
 
-### Using npm
-
-or another package manage like a `bun`, `yarn`, `pnpm`
+### Compile from source
 
 ```sh
-npm install github:kogeletey/col-cal
+git clone https://github.com/kogeletey/col-cal
+cd col-cal
+npm ci
+npx vite build
 ```
 
 ## Usage
 
 ```html
-  <col-cal></col-cal>
+  <col-cal locale="en"></col-cal>
   <script type="module">
     import "col-cal";
   </script>
@@ -35,6 +36,8 @@ npm install github:kogeletey/col-cal
 To develop this project, you can use the following commands:
 
 ### Start Development Server
+
+Install bun
 
 ```sh
 bun vite
