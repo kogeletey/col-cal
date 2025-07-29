@@ -58,7 +58,7 @@ export class ColCal extends LitElement {
     this.date = e.detail;
     this.dispatchEvent(
       new CustomEvent("date-selected", {
-        detail: this.date,
+        detail: { date: this.date },
         bubbles: true,
         composed: true,
       }),
@@ -88,14 +88,14 @@ export class ColCal extends LitElement {
       <div class="calendar">
         <col-cal-header
           .date=${this._month}
-          .locale=${this.locale}
+          .locale=${this.currentLocale}
           @change-month=${({ detail }: { detail: Date }) => {
             this._month = detail as Date;
           }}
         >
           <div slot="header-date">
             <button id="open-months-popup">
-              ${months[this.locale as "ru" | "en"].at(
+              ${months[this.currentLocale].at(
                 this._month.getUTCMonth(),
               )}
             </button>
@@ -128,7 +128,7 @@ export class ColCal extends LitElement {
         <col-cal-dates
           .month=${this._month}
           .selectedDate=${this.date}
-          .locale=${this.locale}
+          .locale=${this.currentLocale}
           .firstDayOfWeek=${this.firstDayOfWeek}
           .disabledDates=${this.disabledDates}
           .events=${this.events}

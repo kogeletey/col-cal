@@ -10,7 +10,7 @@ export class LocaleUtils {
   static LOCALE_MAP: Record<string, Locale> = {
     "en-US": enUS,
     // prettier-ignore
-    'ru': ru,
+    'ru-RU': ru,
   };
 
   currentLocale() {
