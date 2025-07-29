@@ -1,4 +1,6 @@
-# ColCal Project
+# Col-Cal
+
+Is a lightweight, HTML-friendly web component calendar designed to be easy to author and integrate into any web framework. It is built using Lit, a lightweight library for building web components, ensuring that the components are highly performant and maintainable
 
 ## Features
 
