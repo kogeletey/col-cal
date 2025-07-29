@@ -6,27 +6,40 @@ import { LocaleUtils } from "./locale-utils";
 @customElement("col-cal-header")
 export class ColCalHeader extends LitElement {
   static styles = css`
+    :host {
+      --col-cal-header-padding: 0;
+      --col-cal-header-days-font-weight: regular;
+      --col-cal-header-days-color: #757d8a;
+      --col-cal-header-days-font-size: 12px;
+      --col-cal-header-button-color-hover: #77a6ff;
+    }
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.5rem;
+      gap: 10px;
+      padding: var(--col-cal-header-padding, 0.5rem);
+    }
+    .header__buttons {
+      & button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        &:hover {
+          color: var(--col-cal-header-button-color-hover);
+        }
+      }
     }
     .week {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      text-align: center;
-      padding: 0.5rem 0;
+      text-align: var(--col-cal-text-align, center);
+      padding-block: var(--col-cal-header-padding-vertical, 1rem);
     }
     .day-header {
-      font-weight: bold;
-    }
-    .nav-button {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 1.2rem;
-      padding: 0 0.5rem;
+      font-size: var(--col-cal-header-days-font-size, 12px);
+      color: var(--col-cal-header-days-color, black);
+      font-weight: var(--col-cal-header-days-font-weight, regular);
     }
   `;
   @property({ type: String }) locale: string = "en-US";
@@ -48,17 +61,15 @@ export class ColCalHeader extends LitElement {
   render() {
     return html`
       <div class="header" part="header">
-        <div>
-          <slot name="header-date">
-            ${format(this._date, "MMMM yyyy", {
-              locale: new LocaleUtils(this.locale).currentLocale(),
-            })}
-          </slot>
-        </div>
-        <div>
+        <slot class="header__date" name="header-date" part="header-date">
+          ${format(this._date, "MMMM yyyy", {
+            locale: new LocaleUtils(this.locale).currentLocale(),
+          })}
+        </slot>
+        <div class="header__buttons">
           <button
             part="left-button"
-            class="nav-button"
+            class="left-button"
             @click=${() => {
               this._date = subMonths(this._date, 1);
               this.handleChangeMonth();
@@ -67,13 +78,14 @@ export class ColCalHeader extends LitElement {
             <slot name="icon-left-button"> &lt; </slot>
           </button>
           <button
-            class="nav-button"
+            class="right-button"
             part="right-button"
             @click=${() => {
               this._date = addMonths(this._date, 1);
               this.handleChangeMonth();
             }}
           >
+            <!-- :disabled="this.maxDate > this._date" -->
             <slot name="icon-right-button"> &gt; </slot>
           </button>
         </div>
@@ -81,7 +93,7 @@ export class ColCalHeader extends LitElement {
 
       <div class="week">
         ${["П", "В", "С", "Ч", "П", "С", "В"].map(
-          (day) => html`<div class="day-header">${day}</div>`,
+          (day) => html`<span class="day-header">${day}</span>`,
         )}
       </div>
     `;

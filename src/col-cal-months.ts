@@ -6,32 +6,46 @@ import { months } from "./date-utils.ts";
 @customElement("col-cal-months")
 export class ColCalMonths extends LitElement {
   @property({ type: Number }) selectedMonth: MonthNumber | null = null;
+  @property({ type: Number }) disabledMonth: MonthNumber | null = null;
   @property({ type: String }) locale: "en" | "ru" = "en";
 
   static get styles() {
     return css`
+      :host {
+        --col-cal-months-padding: 12px;
+        --col-cal-months-gap: 12px;
+        --col-cal-months-cell-padding: 8px;
+        --col-cal-months-cell-radius: 16px;
+        --col-cal-months-cell-selected: #77a6ff;
+        --col-cal-months-cell-hover: #f2f7ff;
+        --col-cal-months-border-color: #9cbeff;
+      }
       .month-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-        padding: 10px;
-        background: var(--calendar-bg);
-        border: 1px solid #ccc;
+        border-width: var(--col-cal-months-border-width, 1px);
+        border-style: solid;
+        border-color: var(--col-cal-months-border-color, black);
+        gap: var(--col-cal-months-gap, 1rem);
+        padding: var(--col-cal-months-padding, 1rem);
+        background: var(--col-cal-bg);
       }
 
       .month-cell {
-        padding: 15px;
-        text-align: center;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background 0.2s;
+        text-align: var(--col-cal-text-align, center);
+        font-size: var(--col-cal-months-cell-color, 12px);
+        padding: var(--col-cal-months-cell-padding, 15px);
+        border-radius: var(--col-cal-months-cell-radius, 5px);
+        &:hover {
+          background-color: var(--col-cal-months-cell-hover, cyan);
+        }
       }
 
       .month-cell.selected {
-        background-color: #007bff;
-        color: white;
-        font-weight: bold;
+        cursor: pointer;
+        background-color: var(--col-cal-months-cell-selected, blue);
+        color: var(--col-cal-months-cell-selected-color, white);
+        font-weight: var(--col-cal-months-cell-font-weight, regular);
       }
     `;
   }
@@ -42,6 +56,10 @@ export class ColCalMonths extends LitElement {
 
   private isSelected(month: string): boolean {
     return this.selectedMonth === this.getFromIndexMonth(month);
+  }
+
+  private isDisabled(month: string): boolean {
+    return this.disabledMonth === this.getFromIndexMonth(month);
   }
 
   private handleMonthSelect(month: string) {
@@ -56,11 +74,15 @@ export class ColCalMonths extends LitElement {
 
   protected render() {
     return html`
-      <div class="month-grid">
+      <div class="month-grid" part="months">
         ${months[this.locale].map(
           (month: string) =>
             html`<div
-              class="month-cell ${this.isSelected(month) ? "selected" : ""}"
+              part="month"
+              class="month-cell
+              ${this.isSelected(month) ? "selected" : ""}
+              ${this.isDisabled(month) ? "disabled" : ""}
+              "
               @click=${() => this.handleMonthSelect(month)}
               aria-selected=${this.isSelected(month)}
             >

@@ -13,6 +13,9 @@ import type WaPopover from "@awesome.me/webawesome/dist/components/popover/popov
 @customElement("col-cal")
 export class ColCal extends LitElement {
   @property({ type: Object }) date: Date = new Date();
+  @property({ type: Object }) minDate: Date | null = null;
+  @property({ type: Object }) maxDate: Date | null = null;
+
   @property({ type: String }) locale: string = "en-US";
   @property({ type: Number }) firstDayOfWeek: number = 1;
   @property({ type: Array }) disabledDates: Date[] = [];
@@ -69,44 +72,68 @@ export class ColCal extends LitElement {
     return html`
       <style>
         .calendar {
-          --calendar-bg: #ffffff;
-          --calendar-border: #e0e0e0;
-          --calendar-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          --col-cal-bg: #ffffff;
+          --col-cal-radius: 10px;
+          --col-cal-padding: 12px;
+          --col-cal-shadow: 0px 4px 9.8px 0px #0000000d;
           display: inline-block;
           position: relative;
           overflow: hidden;
           background: var(--calendar-bg);
-          border: 1px solid var(--calendar-border);
-          border-radius: var(--col-cal-border-radius, 8px);
-          padding: 10px;
+          border-radius: var(--col-cal-radius, 8px);
+          box-shadow: var(--col-cal-shadow);
+          padding: var(--col-cal-padding, 0.5rem);
         }
 
         .calendar wa-popover {
           --arrow-size: 0;
+          --max-width: fit-content;
+        }
+        .calendar col-cal-months {
+          margin-left: 10px;
+        }
+        .calendar col-cal-years {
+          margin-left: 70px;
+        }
+        .calendar .calendar__header-date {
+          display: flex;
+          gap: 15px;
+          & button {
+            apperance: none;
+            background: none;
+            outline: 0;
+            border: 0;
+            color: var(--col-cal-header-button-color);
+            font-weight: var(--col-cal-header-font-weight, bold);
+          }
         }
       </style>
       <div class="calendar">
         <col-cal-header
           .date=${this._month}
           .locale=${this.currentLocale}
+          .minDate=${this.minDate}
+          .maxDate=${this.maxDate}
           @change-month=${({ detail }: { detail: Date }) => {
             this._month = detail as Date;
           }}
         >
-          <div slot="header-date">
+          <div slot="header-date" class="calendar__header-date">
             <button id="open-months-popup">
-              ${months[this.currentLocale].at(
-                this._month.getUTCMonth(),
-              )}
+              ${months[this.currentLocale].at(this._month.getUTCMonth())}
+              <slot name="months-popup-icon"></slot>
             </button>
-            <button id="open-years-popup">${this._month.getFullYear()}</button>
+            <button id="open-years-popup">
+              ${this._month.getFullYear()}
+              <slot name="years-popup-icon"></slot>
+            </button>
           </div>
         </col-cal-header>
 
         <wa-popover
+          ${ref(this.popoverMonthsRef)}
           position="bottom"
           for="open-months-popup"
-          ${ref(this.popoverMonthsRef)}
         >
           <col-cal-months
             .selectedMonth=${this._month.getUTCMonth()}
@@ -127,6 +154,8 @@ export class ColCal extends LitElement {
 
         <col-cal-dates
           .month=${this._month}
+          .minDate=${this.minDate}
+          .maxDate=${this.maxDate}
           .selectedDate=${this.date}
           .locale=${this.currentLocale}
           .firstDayOfWeek=${this.firstDayOfWeek}
