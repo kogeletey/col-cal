@@ -31,21 +31,20 @@ export class ColCalDate extends LitElement {
     return css`
       :host {
         --col-cal-day-bg: #ffffff;
-        --calendar-border: #e0e0e0;
-        --col-cal-day-selected-bg: #007bff;
+        --col-cal-day-selected-bg: #77a6ff;
         --col-cal-day-selected-color: #ffffff;
-        --col-cal-day-hover-bg: #f0f0f0;
-        --disabled-date-color: #cccccc;
-        --font-size: 14px;
-        --padding: 16px;
-        --spacing: 4px;
+        --col-cal-day-hover-bg: #f2f7ff;
+        --col-cal-day-hover-color: #77a6ff;
+        --col-cal-day-disable-color: #d5d5d6;
+        --col-cal-day-radius: 16px;
+        --col-cal-day-padding: 8px;
       }
 
       .week {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
-        gap: var(--spacing);
-        margin-bottom: var(--spacing);
+        gap: var(--col-cal-day-gap);
+        margin-bottom: var(--col-cal-day-bottom);
       }
 
       .day-header {
@@ -55,7 +54,9 @@ export class ColCalDate extends LitElement {
 
       .day {
         text-align: center;
-        padding: 4px;
+        font-size: var(--col-cal-day-font-size, 14px);
+        padding: var(--col-cal-day-padding);
+        border-radius: var(--col-cal-day-radius, 0);
         apperance: none;
         border: 0;
         outline: 0;
@@ -65,16 +66,17 @@ export class ColCalDate extends LitElement {
       }
 
       .day:hover {
-        background: var(--col-cal-day-hover-bg);
+        color: var(--col-cal-day-hover-color, white);
+        background: var(--col-cal-day-hover-bg, #f0f0f0);
       }
 
       .day.selected {
-        background: var(--col-cal-day-selected-bg);
+        background: var(--col-cal-day-selected-bg, #007bff);
         color: var(--col-cal-day-selected-color);
       }
 
       .day.disabled {
-        color: var(--disabled-date-color);
+        color: var(--col-cal-day-disable-color, #cccccc);
         cursor: default;
       }
     `;

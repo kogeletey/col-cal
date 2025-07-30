@@ -39,7 +39,7 @@ export class ColCalYears extends LitElement {
         padding: var(--col-cal-years-cell-padding, 1rem);
         text-align: center;
         line-height: 100%;
-        font-size: 12px;
+        font-size: var(--col-cal-years-cell-font-size, 12px);
         border-radius: var(--col-cal-years-cell-radius, 5px);
         &:hover {
           background-color: var(--col-cal-years-cell-hover);
@@ -54,25 +54,23 @@ export class ColCalYears extends LitElement {
 
       .navigation {
         display: flex;
+        padding: var(--col-cal-years-buttons-padding, 8px);
+        gap: var(--col-cal-years-buttons-gap, 0px);
         justify-content: center;
       }
 
       .navigation button {
-        padding: 8px 16px;
         cursor: pointer;
+        padding: 0;
+        outline: 0;
         background: none;
         border: none;
       }
 
       .navigation button:disabled {
-        background: #e0e0e0;
+        background: var(--col-cal-years-buttons-disabled-bg);
+        color: var(--col-cal-years-buttons-disabled-color);
         cursor: not-allowed;
-      }
-
-      .label {
-        font-weight: bold;
-        margin-bottom: 10px;
-        display: block;
       }
     `;
   }
