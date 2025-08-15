@@ -2,11 +2,17 @@ import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import type { MonthNumber } from "./col-cal.type.ts";
 import { months } from "./date.utils.ts";
+import { isAfter, isBefore } from "date-fns";
 
 @customElement("col-cal-months")
 export class ColCalMonths extends LitElement {
   @property({ type: Number }) selectedMonth: MonthNumber | null = null;
-  @property({ type: Number }) disabledMonth: MonthNumber | null = null;
+  @property({ type: Array }) disabledMonths: MonthNumber[] | null = null;
+  @property({ type: Number }) year: number = new Date().getFullYear();
+
+  @property({ type: Object }) minMonth: Date | null = null;
+  @property({ type: Object }) maxMonth: Date | null = null;
+
   @property({ type: String }) locale: "en" | "ru" = "en";
 
   static get styles() {
@@ -59,7 +65,17 @@ export class ColCalMonths extends LitElement {
   }
 
   private isDisabled(month: string): boolean {
-    return this.disabledMonth === this.getFromIndexMonth(month);
+    const monthIndex = this.getFromIndexMonth(month);
+    const monthDate = new Date(this.year, monthIndex, 1);
+
+    if (this.minMonth && isBefore(monthDate, this.minMonth)) {
+      return true;
+    }
+    if (this.maxMonth && isAfter(monthDate, this.maxMonth)) {
+      return true;
+    }
+
+    return this.disabledMonths?.includes(monthIndex) ?? false;
   }
 
   private handleMonthSelect(month: string) {
@@ -83,7 +99,9 @@ export class ColCalMonths extends LitElement {
               ${this.isSelected(month) ? "selected" : ""}
               ${this.isDisabled(month) ? "disabled" : ""}
               "
-              @click=${() => this.handleMonthSelect(month)}
+              @click=${() => {
+                if (!this.isDisabled(month)) this.handleMonthSelect(month);
+              }}
               aria-selected=${this.isSelected(month)}
             >
               ${month}

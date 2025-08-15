@@ -5,6 +5,11 @@ import { customElement, property, state } from "lit/decorators.js";
 export class ColCalYears extends LitElement {
   @property({ type: Number }) selectedYear: number | null = null;
 
+  @property({ type: Object }) minYear: number | null = null;
+  @property({ type: Object }) maxYear: number | null = null;
+
+  @property({ type: Array }) disabledYears: number[] = [];
+
   @state()
   private _startYear: number = 2005;
   private _chunkSize = 12;
@@ -107,6 +112,16 @@ export class ColCalYears extends LitElement {
     return this.selectedYear === Number(year);
   }
 
+  private isYearDisabled(year: number): boolean {
+    if (this.minYear && year < this.minYear) {
+      return true;
+    }
+    if (this.maxYear && year > this.maxYear) {
+      return true;
+    }
+    return this.disabledYears.includes(year);
+  }
+
   private handleYearSelect(year: number) {
     this.selectedYear = year;
     this.dispatchEvent(
@@ -135,8 +150,14 @@ export class ColCalYears extends LitElement {
           ${this.fullYears.map(
             (year) =>
               html`<div
-                class="year-cell ${this.isSelectedYear(year) ? "selected" : ""}"
-                @click=${() => this.handleYearSelect(Number(year))}
+                class="year-cell ${this.isSelectedYear(year) ? "selected" : ""}
+                 ${this.isYearDisabled(Number(year)) ? "disabled" : ""}
+                "
+                @click=${() => {
+                  if (!this.isYearDisabled(Number(year))) {
+                    this.handleYearSelect(Number(year));
+                  }
+                }}
                 aria-selected=${this.isSelectedYear(year)}
               >
                 ${year}

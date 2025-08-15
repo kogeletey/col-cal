@@ -6,6 +6,8 @@ import {
   endOfMonth,
   eachDayOfInterval,
   isSameDay,
+  isBefore,
+  isAfter,
   addDays,
   type Day,
   subDays,
@@ -17,6 +19,12 @@ import { LocaleUtils } from "./locale.utils";
 export class ColCalDate extends LitElement {
   @property({ type: Date })
   month: Date | null = null;
+
+  @property({ type: Date })
+  minDate: Date | null = null;
+
+  @property({ type: Date })
+  maxDate: Date | null = null;
 
   @property({ type: Date })
   selectedDate: Date | null = null;
@@ -138,6 +146,13 @@ export class ColCalDate extends LitElement {
   }
 
   private isDateDisabled(date: Date) {
+    if (this.minDate && isBefore(date, this.minDate)) {
+      return true;
+    }
+    console.log(this.maxDate);
+    if (this.maxDate && isAfter(date, this.maxDate)) {
+      return true;
+    }
     return this.disabledDates.some((d) => isSameDay(date, d));
   }
 

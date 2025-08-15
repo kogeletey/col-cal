@@ -2,6 +2,7 @@ import { LitElement, html, css } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { format, subMonths, addMonths } from "date-fns";
 import { LocaleUtils } from "./locale.utils";
+import { isAfter, isBefore } from "date-fns";
 
 @customElement("col-cal-header")
 export class ColCalHeader extends LitElement {
@@ -43,10 +44,13 @@ export class ColCalHeader extends LitElement {
     }
   `;
   @property({ type: String }) locale: string = "en-US";
-  @property({ type: Object }) date: Date = new Date();
+  @property({ type: Object }) date: Date | null = null;
+
+  @property({ type: Object }) minDate: Date | null = null;
+  @property({ type: Object }) maxDate: Date | null = null;
 
   @state()
-  private _date: Date = this.date;
+  private _date: Date = this.date ?? new Date();
 
   handleChangeMonth() {
     this.dispatchEvent(
@@ -56,6 +60,20 @@ export class ColCalHeader extends LitElement {
         composed: true,
       }),
     );
+  }
+
+  private isDateMinDisabled(date: Date | null) {
+    if (date === null) return false;
+    if (this.minDate && isBefore(date, this.minDate)) {
+      return true;
+    }
+  }
+
+  private isDateMaxDisabled(date: Date | null) {
+    if (date === null) return false;
+    if (this.maxDate && isAfter(date, this.maxDate)) {
+      return true;
+    }
   }
 
   render() {
@@ -70,6 +88,7 @@ export class ColCalHeader extends LitElement {
           <button
             part="left-button"
             class="left-button"
+            ?disabled="${this.isDateMinDisabled(this.date)}"
             @click=${() => {
               this._date = subMonths(this._date, 1);
               this.handleChangeMonth();
@@ -80,6 +99,7 @@ export class ColCalHeader extends LitElement {
           <button
             class="right-button"
             part="right-button"
+            ?disabled="${this.isDateMaxDisabled(this.date)}"
             @click=${() => {
               this._date = addMonths(this._date, 1);
               this.handleChangeMonth();

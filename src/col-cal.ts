@@ -23,7 +23,7 @@ export class ColCal extends LitElement {
   @property({ type: Array }) events: Array<{ date: Date; title: string }> = [];
 
   @state()
-  private _month: Date = this.date;
+  private _date: Date = this.date;
 
   private popoverYearsRef: Ref<HTMLElement> = createRef();
   private popoverMonthsRef: Ref<HTMLElement> = createRef();
@@ -39,6 +39,12 @@ export class ColCal extends LitElement {
   connectedCallback(): void {
     super.connectedCallback();
 
+    if (this.date !== null) {
+      this._date = this.date;
+    } else {
+      this._date = new Date();
+    }
+
     requestAnimationFrame(() => {
       insertSlotsByName(this);
     });
@@ -51,9 +57,9 @@ export class ColCal extends LitElement {
   }
 
   private handleChangeMonth({ detail }: { detail: { month: MonthNumber } }) {
-    this._month = createDateFromMonthNumber(
+    this._date = createDateFromMonthNumber(
       detail.month,
-      this._month.getFullYear(),
+      this._date.getFullYear(),
     );
     if (this.popoverMonthsRef.value) {
       (this.popoverMonthsRef.value as WaPopover).hide();
@@ -61,12 +67,8 @@ export class ColCal extends LitElement {
   }
 
   private handleYearSelected({ detail }: { detail: { year: number } }) {
-    this._month = new Date(
-      this._month.getFullYear(),
-      this._month.getMonth(),
-      3,
-    );
-    this._month.setFullYear(detail.year);
+    this._date = new Date(this._date.getFullYear(), this._date.getMonth(), 3);
+    this._date.setFullYear(detail.year);
     if (this.popoverYearsRef.value) {
       (this.popoverYearsRef.value as WaPopover).hide();
     }
@@ -93,7 +95,7 @@ export class ColCal extends LitElement {
   private handleDateSelected(e: CustomEvent) {
     this.date = e.detail;
     this.dispatchEvent(
-      new CustomEvent("date-selected", {
+      new CustomEvent("change-date", {
         detail: { date: this.date },
         bubbles: true,
         composed: true,
@@ -143,21 +145,21 @@ export class ColCal extends LitElement {
       </style>
       <div class="calendar">
         <col-cal-header
-          .date=${this._month}
+          .date=${this._date}
           .locale=${this.currentLocale}
           .minDate=${this.minDate}
           .maxDate=${this.maxDate}
           @change-month=${({ detail }: { detail: Date }) => {
-            this._month = detail as Date;
+            this._date = detail as Date;
           }}
         >
           <div slot="header-date" class="calendar__header-date">
             <button id="open-months-popup">
-              ${months[this.currentLocale].at(this._month.getUTCMonth())}
+              ${months[this.currentLocale].at(this._date.getUTCMonth())}
               <div name="months-popup-icon"></div>
             </button>
             <button id="open-years-popup">
-              ${this._month.getFullYear()}
+              ${this._date.getFullYear()}
               <div name="years-popup-icon"></div>
             </button>
           </div>
@@ -173,7 +175,10 @@ export class ColCal extends LitElement {
           @wa-hide="${this.handleMonthsChange}"
         >
           <col-cal-months
-            .selectedMonth=${this._month.getUTCMonth()}
+            .year="${this._date.getUTCFullYear()}"
+            .selectedMonth=${this._date.getUTCMonth()}
+            .minMonth=${this.minDate}
+            .maxMonth=${this.maxDate}
             .locale=${this.currentLocale}
             @change-month="${this.handleChangeMonth}"
           ></col-cal-months>
@@ -186,7 +191,9 @@ export class ColCal extends LitElement {
           @wa-hide="${this.handleYearsChange}"
         >
           <col-cal-years
-            .selectedYear=${this._month.getUTCFullYear()}
+            .selectedYear=${this._date.getUTCFullYear()}
+            .minYear=${this.minDate?.getUTCFullYear()}
+            .maxYear=${this.maxDate?.getUTCFullYear()}
             @change-year=${this.handleYearSelected}
           >
             <div slot="icon-left-button" name="years-icon-left">&lt;</div>
@@ -195,7 +202,7 @@ export class ColCal extends LitElement {
         </wa-popover>
 
         <col-cal-dates
-          .month=${this._month}
+          .month=${this._date}
           .minDate=${this.minDate}
           .maxDate=${this.maxDate}
           .selectedDate=${this.date}
