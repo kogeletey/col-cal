@@ -1,7 +1,7 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import type { MonthNumber } from "./col-cal.type.ts";
-import { months } from "./date-utils.ts";
+import { months } from "./date.utils.ts";
 
 @customElement("col-cal-months")
 export class ColCalMonths extends LitElement {

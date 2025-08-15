@@ -1,7 +1,7 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { format, subMonths, addMonths } from "date-fns";
-import { LocaleUtils } from "./locale-utils";
+import { LocaleUtils } from "./locale.utils";
 
 @customElement("col-cal-header")
 export class ColCalHeader extends LitElement {

@@ -11,7 +11,7 @@ import {
   subDays,
 } from "date-fns";
 import { getDay, isSameMonth } from "date-fns/fp";
-import { LocaleUtils } from "./locale-utils";
+import { LocaleUtils } from "./locale.utils";
 
 @customElement("col-cal-dates")
 export class ColCalDate extends LitElement {
