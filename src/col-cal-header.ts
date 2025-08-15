@@ -62,6 +62,24 @@ export class ColCalHeader extends LitElement {
     );
   }
 
+  connectedCallback(): void {
+    super.connectedCallback();
+
+    if (this.date !== null) {
+      this._date = this.date;
+    } else {
+      this._date = new Date();
+    }
+  }
+
+  updated(): void {
+    if (this.date !== null) {
+      this._date = this.date;
+    } else {
+      this._date = new Date();
+    }
+  }
+
   private isDateMinDisabled(date: Date | null) {
     if (date === null) return false;
     if (this.minDate && isBefore(date, this.minDate)) {
@@ -105,7 +123,6 @@ export class ColCalHeader extends LitElement {
               this.handleChangeMonth();
             }}
           >
-            <!-- :disabled="this.maxDate > this._date" -->
             <slot name="icon-right-button"> &gt; </slot>
           </button>
         </div>

@@ -149,7 +149,7 @@ export class ColCalDate extends LitElement {
     if (this.minDate && isBefore(date, this.minDate)) {
       return true;
     }
-    console.log(this.maxDate);
+
     if (this.maxDate && isAfter(date, this.maxDate)) {
       return true;
     }
