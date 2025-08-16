@@ -159,7 +159,7 @@ export class ColCalDate extends LitElement {
   private handleDateSelect(date: Date) {
     if (!this.isDateDisabled(date)) {
       this.selectedDate = date;
-      this.dispatchEvent(new CustomEvent("date-selected", { detail: date }));
+      this.dispatchEvent(new CustomEvent("change-date", { detail: date }));
     }
   }
 

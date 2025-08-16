@@ -210,7 +210,7 @@ export class ColCal extends LitElement {
           .firstDayOfWeek=${this.firstDayOfWeek}
           .disabledDates=${this.disabledDates}
           .events=${this.events}
-          @date-selected=${this.handleDateSelected}
+          @change-date=${this.handleDateSelected}
         ></col-cal-dates>
       </div>
     `;

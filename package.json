@@ -5,9 +5,7 @@
   "type": "module",
   "main": "./dist/col-cal.js",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "vite build"
   },
   "files": [
     "dist"
