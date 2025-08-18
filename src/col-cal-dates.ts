@@ -16,7 +16,7 @@ import { getDay, isSameMonth } from "date-fns/fp";
 import { LocaleUtils } from "./locale.utils";
 
 @customElement("col-cal-dates")
-export class ColCalDate extends LitElement {
+export class ColCalDates extends LitElement {
   @property({ type: Date })
   month: Date | null = null;
 
@@ -197,6 +197,6 @@ export class ColCalDate extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "col-cal-date": ColCalDate;
+    "col-cal-date": ColCalDates;
   }
 }

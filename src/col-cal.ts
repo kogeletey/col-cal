@@ -29,7 +29,7 @@ export class ColCal extends LitElement {
   private popoverMonthsRef: Ref<HTMLElement> = createRef();
 
   private get currentLocale(): string {
-    return this.locale.startsWith("ru") ? "ru" : this.locale;
+    return this.locale;
   }
 
   protected createRenderRoot(): HTMLElement | DocumentFragment {

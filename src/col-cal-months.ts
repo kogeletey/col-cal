@@ -13,7 +13,7 @@ export class ColCalMonths extends LitElement {
   @property({ type: Object }) minMonth: Date | null = null;
   @property({ type: Object }) maxMonth: Date | null = null;
 
-  @property({ type: String }) locale: string = "en";
+  @property({ type: String }) locale: string = "en-US";
 
   static get styles() {
     return css`
