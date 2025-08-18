@@ -1,7 +1,7 @@
 import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import type { MonthNumber } from "./col-cal.type.ts";
-import { months } from "./date.utils.ts";
+import { getMonths } from "./date.utils.ts";
 import { isAfter, isBefore } from "date-fns";
 
 @customElement("col-cal-months")
@@ -13,7 +13,7 @@ export class ColCalMonths extends LitElement {
   @property({ type: Object }) minMonth: Date | null = null;
   @property({ type: Object }) maxMonth: Date | null = null;
 
-  @property({ type: String }) locale: "en" | "ru" = "en";
+  @property({ type: String }) locale: string = "en";
 
   static get styles() {
     return css`
@@ -57,7 +57,7 @@ export class ColCalMonths extends LitElement {
   }
 
   private getFromIndexMonth(month: string): MonthNumber {
-    return months[this.locale].indexOf(month) as MonthNumber;
+    return getMonths(this.locale).indexOf(month) as MonthNumber;
   }
 
   private isSelected(month: string): boolean {
@@ -91,7 +91,7 @@ export class ColCalMonths extends LitElement {
   protected render() {
     return html`
       <div class="month-grid" part="months">
-        ${months[this.locale].map(
+        ${getMonths(this.locale).map(
           (month: string) =>
             html`<div
               part="month"

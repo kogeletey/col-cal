@@ -6,7 +6,7 @@ import "./col-cal-dates.ts";
 import "./col-cal-months.ts";
 import "./col-cal-years.ts";
 import type { MonthNumber } from "./col-cal.type.ts";
-import { createDateFromMonthNumber, months } from "./date.utils.ts";
+import { createDateFromMonthNumber, getMonths } from "./date.utils.ts";
 import { createRef, ref, type Ref } from "lit/directives/ref.js";
 import type WaPopover from "@awesome.me/webawesome/dist/components/popover/popover.js";
 import { insertSlotsByName } from "./lightdom.utils.ts";
@@ -28,8 +28,8 @@ export class ColCal extends LitElement {
   private popoverYearsRef: Ref<HTMLElement> = createRef();
   private popoverMonthsRef: Ref<HTMLElement> = createRef();
 
-  private get currentLocale(): "en" | "ru" {
-    return this.locale.startsWith("ru") ? "ru" : "en";
+  private get currentLocale(): string {
+    return this.locale.startsWith("ru") ? "ru" : this.locale;
   }
 
   protected createRenderRoot(): HTMLElement | DocumentFragment {
@@ -86,6 +86,24 @@ export class ColCal extends LitElement {
   private handleYearsChange() {
     this.dispatchEvent(
       new CustomEvent("show-years", {
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private handleYearsHideChange() {
+    this.dispatchEvent(
+      new CustomEvent("hide-years", {
+        bubbles: true,
+        composed: true,
+      }),
+    );
+  }
+
+  private handleMonthsHideChange() {
+    this.dispatchEvent(
+      new CustomEvent("hide-months", {
         bubbles: true,
         composed: true,
       }),
@@ -155,7 +173,7 @@ export class ColCal extends LitElement {
         >
           <div slot="header-date" class="calendar__header-date">
             <button id="open-months-popup" class="popup">
-              ${months[this.currentLocale].at(this._date.getUTCMonth())}
+              ${getMonths(this.currentLocale).at(this._date.getUTCMonth())}
               <div name="months-popup-icon"></div>
             </button>
             <button id="open-years-popup" class="popup">
@@ -163,8 +181,20 @@ export class ColCal extends LitElement {
               <div name="years-popup-icon"></div>
             </button>
           </div>
-          <div part="icon-button" name="icon-left-button" slot="icon-left-button">&lt;</div>
-          <div part="icon-button" name="icon-right-button" slot="icon-right-button">&gt;</div>
+          <div
+            part="icon-button"
+            name="icon-left-button"
+            slot="icon-left-button"
+          >
+            &lt;
+          </div>
+          <div
+            part="icon-button"
+            name="icon-right-button"
+            slot="icon-right-button"
+          >
+            &gt;
+          </div>
         </col-cal-header>
 
         <wa-popover
@@ -172,7 +202,7 @@ export class ColCal extends LitElement {
           position="bottom"
           for="open-months-popup"
           @wa-show="${this.handleMonthsChange}"
-          @wa-hide="${this.handleMonthsChange}"
+          @wa-after-hide="${this.handleMonthsHideChange}"
         >
           <col-cal-months
             .year="${this._date.getUTCFullYear()}"
@@ -188,7 +218,7 @@ export class ColCal extends LitElement {
           position="bottom"
           for="open-years-popup"
           @wa-show="${this.handleYearsChange}"
-          @wa-hide="${this.handleYearsChange}"
+          @wa-after-hide="${this.handleYearsHideChange}"
         >
           <col-cal-years
             .selectedYear=${this._date.getUTCFullYear()}
@@ -196,8 +226,20 @@ export class ColCal extends LitElement {
             .maxYear=${this.maxDate?.getUTCFullYear()}
             @change-year=${this.handleYearSelected}
           >
-            <div part="years-arrow-icon" slot="icon-left-button" name="years-icon-left">&lt;</div>
-            <div part="years-arrow-icon" slot="icon-right-button" name="years-icon-right">&gt;</div>
+            <div
+              part="years-arrow-icon"
+              slot="icon-left-button"
+              name="years-icon-left"
+            >
+              &lt;
+            </div>
+            <div
+              part="years-arrow-icon"
+              slot="icon-right-button"
+              name="years-icon-right"
+            >
+              &gt;
+            </div>
           </col-cal-years>
         </wa-popover>
 

@@ -3,6 +3,7 @@ import { customElement, property, state } from "lit/decorators.js";
 import { format, subMonths, addMonths } from "date-fns";
 import { LocaleUtils } from "./locale.utils";
 import { isAfter, isBefore } from "date-fns";
+import { getWeeks } from "./date.utils";
 
 @customElement("col-cal-header")
 export class ColCalHeader extends LitElement {
@@ -129,8 +130,8 @@ export class ColCalHeader extends LitElement {
       </div>
 
       <div class="week">
-        ${["П", "В", "С", "Ч", "П", "С", "В"].map(
-          (day) => html`<span class="day-header">${day}</span>`,
+        ${getWeeks(this.locale).map(
+          (dayWeek) => html`<span class="day-header">${dayWeek}</span>`,
         )}
       </div>
     `;
