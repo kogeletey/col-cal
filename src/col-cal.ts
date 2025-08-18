@@ -134,7 +134,7 @@ export class ColCal extends LitElement {
           display: flex;
           gap: 15px;
           & button {
-            apperance: none;
+            appearance: none;
             background: none;
             outline: 0;
             border: 0;
@@ -154,17 +154,17 @@ export class ColCal extends LitElement {
           }}
         >
           <div slot="header-date" class="calendar__header-date">
-            <button id="open-months-popup">
+            <button id="open-months-popup" class="popup">
               ${months[this.currentLocale].at(this._date.getUTCMonth())}
               <div name="months-popup-icon"></div>
             </button>
-            <button id="open-years-popup">
+            <button id="open-years-popup" class="popup">
               ${this._date.getFullYear()}
               <div name="years-popup-icon"></div>
             </button>
           </div>
-          <div name="icon-left-button" slot="icon-left-button">&lt;</div>
-          <div name="icon-right-button" slot="icon-right-button">&gt;</div>
+          <div part="icon-button" name="icon-left-button" slot="icon-left-button">&lt;</div>
+          <div part="icon-button" name="icon-right-button" slot="icon-right-button">&gt;</div>
         </col-cal-header>
 
         <wa-popover
@@ -196,8 +196,8 @@ export class ColCal extends LitElement {
             .maxYear=${this.maxDate?.getUTCFullYear()}
             @change-year=${this.handleYearSelected}
           >
-            <div slot="icon-left-button" name="years-icon-left">&lt;</div>
-            <div slot="icon-right-button" name="years-icon-right">&gt;</div>
+            <div part="years-arrow-icon" slot="icon-left-button" name="years-icon-left">&lt;</div>
+            <div part="years-arrow-icon" slot="icon-right-button" name="years-icon-right">&gt;</div>
           </col-cal-years>
         </wa-popover>
 

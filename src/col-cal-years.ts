@@ -150,14 +150,15 @@ export class ColCalYears extends LitElement {
           ${this.fullYears.map(
             (year) =>
               html`<div
-                class="year-cell ${this.isSelectedYear(year) ? "selected" : ""}
-                 ${this.isYearDisabled(Number(year)) ? "disabled" : ""}
-                "
+                class="year-cell ${this.isSelectedYear(year) ? "selected" : ""}"
                 @click=${() => {
                   if (!this.isYearDisabled(Number(year))) {
                     this.handleYearSelect(Number(year));
                   }
                 }}
+                part="year ${this.isYearDisabled(Number(year))
+                  ? "disabled"
+                  : ""}"
                 aria-selected=${this.isSelectedYear(year)}
               >
                 ${year}
