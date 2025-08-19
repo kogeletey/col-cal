@@ -24,6 +24,8 @@ export class ColCal extends LitElement {
 
   @state()
   private _date: Date = this.date;
+  private _monthsButtonId: string = "open-months-popup";
+  private _yearsButtonId: string = "open-years-popup";
 
   private popoverYearsRef: Ref<HTMLElement> = createRef();
   private popoverMonthsRef: Ref<HTMLElement> = createRef();
@@ -36,6 +38,17 @@ export class ColCal extends LitElement {
     return this;
   }
 
+  private generateUniqueButtonId(prefix: string) {
+    if (typeof crypto !== "undefined" && crypto.randomUUID) {
+      return prefix + crypto.randomUUID().substring(0, 5);
+    }
+
+    const randomPart =
+      Math.random().toString(36).substring(2, 15) +
+      Math.random().toString(36).substring(2, 15);
+    return prefix + randomPart;
+  }
+
   connectedCallback(): void {
     super.connectedCallback();
 
@@ -44,6 +57,9 @@ export class ColCal extends LitElement {
     } else {
       this._date = new Date();
     }
+
+    this._monthsButtonId = this.generateUniqueButtonId(this._monthsButtonId);
+    this._yearsButtonId = this.generateUniqueButtonId(this._yearsButtonId);
 
     requestAnimationFrame(() => {
       insertSlotsByName(this);
@@ -172,11 +188,11 @@ export class ColCal extends LitElement {
           }}
         >
           <div slot="header-date" class="calendar__header-date">
-            <button id="open-months-popup" class="popup">
+            <button id="${this._monthsButtonId}" class="popup">
               ${getMonths(this.currentLocale).at(this._date.getUTCMonth())}
               <div name="months-popup-icon"></div>
             </button>
-            <button id="open-years-popup" class="popup">
+            <button id="${this._yearsButtonId}" class="popup">
               ${this._date.getFullYear()}
               <div name="years-popup-icon"></div>
             </button>
@@ -200,7 +216,7 @@ export class ColCal extends LitElement {
         <wa-popover
           ${ref(this.popoverMonthsRef)}
           position="bottom"
-          for="open-months-popup"
+          for="${this._monthsButtonId}"
           @wa-show="${this.handleMonthsChange}"
           @wa-after-hide="${this.handleMonthsHideChange}"
         >
@@ -216,7 +232,7 @@ export class ColCal extends LitElement {
         <wa-popover
           ${ref(this.popoverYearsRef)}
           position="bottom"
-          for="open-years-popup"
+          for="${this._yearsButtonId}"
           @wa-show="${this.handleYearsChange}"
           @wa-after-hide="${this.handleYearsHideChange}"
         >
