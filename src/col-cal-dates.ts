@@ -176,9 +176,9 @@ export class ColCalDates extends LitElement {
             const isDisabled = this.isDateDisabled(date);
             return html`
               <button
-                class="day ${isSelected ? "selected" : ""} ${isDisabled
-                  ? "disabled"
-                  : ""}"
+                class="day ${isSelected && !isDisabled
+                  ? "selected"
+                  : ""} ${isDisabled ? "disabled" : ""}"
                 @click=${() => this.handleDateSelect(date)}
                 aria-label=${format(date, "PPP", {
                   locale: new LocaleUtils(this.locale).currentLocale(),

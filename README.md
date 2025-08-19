@@ -1,11 +1,6 @@
 # Col-Cal
 
-Is a lightweight, HTML-friendly web component calendar designed to be easy to author and integrate into any web framework. It is built using Lit, a lightweight library for building web components, ensuring that the components are highly performant and maintainable
-
-## Features
-
-- HTML-friendly - easy to author, framework-independent
-- Composable - impose no DOM specific structure, play well with others
+Is a lightweight, HTML-friendly web component calendar
 
 ## Installation
 
@@ -14,7 +9,7 @@ To use this project, you need to install the necessary dependencies. You can do 
 ### Compile from source
 
 ```sh
-git clone https://github.com/kogeletey/col-cal
+git clone https://github.com/pksep/col-cal
 cd col-cal
 npm ci
 npx vite build
@@ -23,7 +18,7 @@ npx vite build
 ## Usage
 
 ```html
-  <col-cal locale="en"></col-cal>
+  <col-cal locale="en-US"></col-cal>
   <script type="module">
     import "col-cal";
   </script>
@@ -32,6 +27,7 @@ npx vite build
 ## Dependencies
 
 - **Lit**: A lightweight library for building web components.
+- **Date-Fns**: A modern JavaScript date utility library that provides a comprehensive set of functions for manipulating and formatting dates.
 
 ## Development
 
@@ -50,10 +46,10 @@ bun vite
 ```sh
 bun vite build
 ```
-
+<!--
 ## Contributing
-
- Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) for more information.
+Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTING.md) for more information
+-->
 
 ## License
 

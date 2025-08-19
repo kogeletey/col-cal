@@ -156,7 +156,8 @@ export class ColCalYears extends LitElement {
                     this.handleYearSelect(Number(year));
                   }
                 }}
-                part="year ${this.isYearDisabled(Number(year))
+                part="year ${this.isYearDisabled(Number(year)) &&
+                !this.isSelectedYear(year)
                   ? "disabled"
                   : ""}"
                 aria-selected=${this.isSelectedYear(year)}

@@ -97,7 +97,9 @@ export class ColCalMonths extends LitElement {
               part="month"
               class="month-cell
               ${this.isSelected(month) ? "selected" : ""}
-              ${this.isDisabled(month) ? "disabled" : ""}
+              ${this.isDisabled(month) && !this.isSelected(month)
+                ? "disabled"
+                : ""}
               "
               @click=${() => {
                 if (!this.isDisabled(month)) this.handleMonthSelect(month);
