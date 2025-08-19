@@ -105,7 +105,9 @@ export class ColCalMonths extends LitElement {
                 if (!this.isDisabled(month)) this.handleMonthSelect(month);
               }}
               aria-selected=${this.isSelected(month)}
-              part="month ${this.isDisabled(month) ? "disabled" : ""}
+              part="month ${this.isDisabled(month) && !this.isSelected(month)
+                ? "disabled"
+                : ""}
             "
             >
               ${month}
