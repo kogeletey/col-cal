@@ -39,13 +39,13 @@ export class ColCalDates extends LitElement {
     return css`
       :host {
         --col-cal-day-bg: #ffffff;
-        --col-cal-day-selected-bg: #77a6ff;
-        --col-cal-day-selected-color: #ffffff;
-        --col-cal-day-hover-bg: #f2f7ff;
-        --col-cal-day-hover-color: #77a6ff;
+        --col-cal-day-hover-bg: #77a6ff;
+        --col-cal-day-hover-color: #ffffff;
+        --col-cal-day-selected-bg: #f2f7ff;
+        --col-cal-day-selected-color: #77a6ff;
         --col-cal-day-disable-color: #d5d5d6;
         --col-cal-day-radius: 16px;
-        --col-cal-day-padding: 8px;
+        --col-cal-day-padding: 7px 8.7px;
       }
 
       .week {

@@ -17,18 +17,21 @@ export class ColCalYears extends LitElement {
   static get styles() {
     return css`
       :host {
-        --col-cal-years-cell-hover: #f2f7ff;
         --col-cal-years-padding: 12px;
+        --col-cal-years-border-radius: 5px;
         --col-cal-years-cell-radius: 16px;
         --col-cal-years-cell-padding: 7.5px 13.5px;
-        --col-cal-years-cell-selected: #77a6ff;
+        --col-cal-years-cell-selected: #f2f7ff;
+        --col-cal-years-cell-selected-color: #77a6ff;
         --col-cal-years-gap: 12px;
+        --col-cal-years-cell-hover: #77a6ff;
         --col-cal-years-border-color: #9cbeff;
       }
       .year-grid {
         display: grid;
         border-width: var(--col-cal-years-border-width, 1px);
         border-style: solid;
+        border-radius: var(--col-cal-years-border-radius, 0);
         padding: var(--col-cal-years-padding, 1rem);
         border-color: var(--col-cal-years-border-color, black);
         background: var(--col-cal-bg);

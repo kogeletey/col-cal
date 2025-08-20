@@ -14,13 +14,12 @@ export const getMonths = (locale: string = "en-US") =>
       month: "short",
     });
     return locale.startsWith("ru")
-      ? (month.charAt(0).toUpperCase() + month.slice(1))
-          .replace(/\.$/, "")
+      ? (month.charAt(0).toUpperCase() + month.slice(1)).replace(/\.$/, "")
       : month;
   });
 
 export const getWeeks = (locale: string = "en-US") => {
-  const baseDate = new Date(2000, 0, 1);
+  const baseDate = new Date(2000, 0, 3);
   return Array.from({ length: 7 }, (_, i) => {
     const date = new Date(baseDate);
     date.setDate(baseDate.getDate() + i);
