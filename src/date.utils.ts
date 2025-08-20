@@ -15,7 +15,6 @@ export const getMonths = (locale: string = "en-US") =>
     });
     return locale.startsWith("ru")
       ? (month.charAt(0).toUpperCase() + month.slice(1))
-          .slice(0, 3)
           .replace(/\.$/, "")
       : month;
   });

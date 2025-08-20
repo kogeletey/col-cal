@@ -20,7 +20,7 @@ export class ColCalMonths extends LitElement {
       :host {
         --col-cal-months-padding: 12px;
         --col-cal-months-gap: 12px;
-        --col-cal-months-cell-padding: 8px;
+        --col-cal-months-cell-padding: 9px 18.5px;
         --col-cal-months-cell-radius: 16px;
         --col-cal-months-cell-selected: #77a6ff;
         --col-cal-months-cell-hover: #f2f7ff;
@@ -28,7 +28,7 @@ export class ColCalMonths extends LitElement {
       }
       .month-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         border-width: var(--col-cal-months-border-width, 1px);
         border-style: solid;
         border-color: var(--col-cal-months-border-color, black);
@@ -39,7 +39,8 @@ export class ColCalMonths extends LitElement {
 
       .month-cell {
         text-align: var(--col-cal-text-align, center);
-        font-size: var(--col-cal-months-cell-color, 12px);
+        font-size: var(--col-cal-months-cell-font-size, 12px);
+        line-height: 100%;
         padding: var(--col-cal-months-cell-padding, 15px);
         border-radius: var(--col-cal-months-cell-radius, 5px);
         &:hover {
