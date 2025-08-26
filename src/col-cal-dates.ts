@@ -86,6 +86,12 @@ export class ColCalDates extends LitElement {
       .day.disabled {
         color: var(--col-cal-day-disable-color, #cccccc);
         cursor: default;
+        &:hover {
+          background-color: var(
+            --col-cal-day-disable-background-color,
+            transparent
+          );
+        }
       }
     `;
   }

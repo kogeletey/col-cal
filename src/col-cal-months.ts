@@ -57,6 +57,11 @@ export class ColCalMonths extends LitElement {
         color: var(--col-cal-months-cell-selected-color, white);
         font-weight: var(--col-cal-months-cell-font-weight, regular);
       }
+      .month-cell.disabled {
+        &:hover {
+          background: var(--col-cal-disabled-color-bg, transparent);
+        }
+      }
     `;
   }
 

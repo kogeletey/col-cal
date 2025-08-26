@@ -14,6 +14,8 @@ export class ColCalHeader extends LitElement {
       --col-cal-header-days-color: #757d8a;
       --col-cal-header-days-font-size: 12px;
       --col-cal-header-button-color-hover: #77a6ff;
+      --col-cal-header-buttons-disabled-color: #a6a3ad;
+      --col-cal-header-background-color: #ecf3ff;
     }
     .header {
       display: flex;
@@ -29,6 +31,13 @@ export class ColCalHeader extends LitElement {
         cursor: pointer;
         &:hover {
           color: var(--col-cal-header-button-color-hover);
+          background-clor: var(--col-cal-header-background-color);
+        }
+        &:disabled {
+          color: var(--col-cal-header-buttons-disabled-color, black);
+          &:hover {
+            color: var(--col-cal-header-buttons-disabled-color, black);
+          }
         }
       }
     }

@@ -60,6 +60,12 @@ export class ColCalYears extends LitElement {
         font-weight: normal;
       }
 
+      .year-cell.disabled {
+        cursor: normal;
+        color: var(--col-cal-years-disabled-color);
+        background-color: var(--col-years-disabled-bg-color, transparent);
+      }
+
       .navigation {
         display: flex;
         padding: var(--col-cal-years-buttons-padding, 8px);
@@ -153,7 +159,10 @@ export class ColCalYears extends LitElement {
           ${this.fullYears.map(
             (year) =>
               html`<div
-                class="year-cell ${this.isSelectedYear(year) ? "selected" : ""}"
+                class="year-cell ${this.isSelectedYear(year) ? "selected" : ""}
+               ${this.isYearDisabled(Number(year)) && !this.isSelectedYear(year)
+                  ? "disabled"
+                  : ""}"
                 @click=${() => {
                   if (!this.isYearDisabled(Number(year))) {
                     this.handleYearSelect(Number(year));
