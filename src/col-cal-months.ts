@@ -70,13 +70,20 @@ export class ColCalMonths extends LitElement {
 
   private isDisabled(month: string): boolean {
     const monthIndex = this.getFromIndexMonth(month);
-    const monthDate = new Date(this.year, monthIndex, 1);
+    if (this.minMonth) {
+      const monthDate = new Date(this.year, monthIndex, this.minMonth.getDay());
 
-    if (this.minMonth && isBefore(monthDate, this.minMonth)) {
-      return true;
+      if (isBefore(monthDate, this.minMonth)) {
+        return true;
+      }
     }
-    if (this.maxMonth && isAfter(monthDate, this.maxMonth)) {
-      return true;
+
+    if (this.maxMonth) {
+      const monthDate = new Date(this.year, monthIndex, this.maxMonth.getDay());
+
+      if (isAfter(monthDate, this.maxMonth)) {
+        return true;
+      }
     }
 
     return this.disabledMonths?.includes(monthIndex) ?? false;

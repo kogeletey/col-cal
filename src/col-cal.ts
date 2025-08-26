@@ -189,7 +189,7 @@ export class ColCal extends LitElement {
         >
           <div slot="header-date" class="calendar__header-date">
             <button id="${this._monthsButtonId}" class="popup">
-              ${getMonths(this.currentLocale).at(this._date.getUTCMonth())}
+              ${getMonths(this.currentLocale).at(this._date.getMonth())}
               <div name="months-popup-icon"></div>
             </button>
             <button id="${this._yearsButtonId}" class="popup">
@@ -221,8 +221,8 @@ export class ColCal extends LitElement {
           @wa-after-hide="${this.handleMonthsHideChange}"
         >
           <col-cal-months
-            .year="${this._date.getUTCFullYear()}"
-            .selectedMonth=${this._date.getUTCMonth()}
+            .year="${this._date.getFullYear()}"
+            .selectedMonth=${this._date.getMonth()}
             .minMonth=${this.minDate}
             .maxMonth=${this.maxDate}
             .locale=${this.currentLocale}
@@ -237,9 +237,9 @@ export class ColCal extends LitElement {
           @wa-after-hide="${this.handleYearsHideChange}"
         >
           <col-cal-years
-            .selectedYear=${this._date.getUTCFullYear()}
-            .minYear=${this.minDate?.getUTCFullYear()}
-            .maxYear=${this.maxDate?.getUTCFullYear()}
+            .selectedYear=${this._date.getFullYear()}
+            .minYear=${this.minDate?.getFullYear()}
+            .maxYear=${this.maxDate?.getFullYear()}
             @change-year=${this.handleYearSelected}
           >
             <div
