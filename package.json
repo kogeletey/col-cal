@@ -1,11 +1,11 @@
 {
   "name": "col-cal",
-  "version": "1.0.0-alpha.0",
+  "version": "1.1.0-alpha.0",
   "type": "module",
   "main": "./dist/col-cal.js",
   "scripts": {
     "build": "tsc && vite build",
-    "publish": "bun run build && npm publish"
+    "publish": "bun run build && bun publish"
   },
   "files": [
     "dist"
