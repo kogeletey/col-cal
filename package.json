@@ -1,6 +1,6 @@
 {
   "name": "col-cal",
-  "version": "1.1.0-alpha.0",
+  "version": "2.0.0-alpha.0",
   "type": "module",
   "main": "./dist/col-cal.js",
   "scripts": {
