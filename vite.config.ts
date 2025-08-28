@@ -8,9 +8,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(__dirname, "src/col-cal.index.ts"),
+      entry: [
+        resolve(__dirname, "src/index.ts"),
+      ],
       name: "ColCal",
-      fileName: "col-cal",
+            formats: ['es'],
+      fileName: "col-cal"
     },
   },
   plugins: [

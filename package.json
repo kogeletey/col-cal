@@ -12,8 +12,7 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/col-cal.js",
-      "require": "./dist/col-cal.umd.cjs"
+      "import": "./dist/col-cal.js"
     }
   },
   "dependencies": {
