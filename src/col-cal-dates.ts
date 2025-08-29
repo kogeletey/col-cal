@@ -152,14 +152,20 @@ export class ColCalDates extends LitElement {
   }
 
   private isDateDisabled(date: Date) {
-    if (this.minDate && isBefore(date, this.minDate)) {
-      return true;
+    if (this.minDate) {
+      this.minDate.setHours(0, 0, 0, 0);
+      if (isBefore(date, this.minDate)) {
+        return true;
+      }
     }
 
-    if (this.maxDate && isAfter(date, this.maxDate)) {
-      return true;
+    if (this.maxDate) {
+      this.maxDate.setHours(0, 0, 0, 0);
+      if (isAfter(date, this.maxDate)) {
+        return true;
+      }
+      return this.disabledDates.some((d) => isSameDay(date, d));
     }
-    return this.disabledDates.some((d) => isSameDay(date, d));
   }
 
   private handleDateSelect(date: Date) {
