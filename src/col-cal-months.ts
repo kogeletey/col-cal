@@ -108,12 +108,12 @@ export class ColCalMonths extends LitElement {
   protected render() {
     return html`
       <div class="month-grid" part="months"
-          .dataTestid="${`${this.dataTestid}-Months`}"
+          data-testid="${`${this.dataTestid}-Months`}"
       >
         ${getMonths(this.locale).map(
           (month: string) =>
             html`<div
-              .dataTestid="${`${this.dataTestid}-Months-Cell`}"
+              data-testid="${`${this.dataTestid}-Months-Cell`}"
               part="month"
               class="month-cell"
               ${this.isSelected(month) ? "selected" : ""}

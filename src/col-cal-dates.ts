@@ -180,7 +180,7 @@ export class ColCalDates extends LitElement {
     const days = this.getMonthDays();
     if (days) {
       return html`
-        <div class="week" .dataTestid="${this.dataTestid}">
+        <div class="week" data-testid="${this.dataTestid}">
           ${days.map((date) => {
             const isSelected =
               isSameMonth(date, this.selectedDate as Date) &&
@@ -189,7 +189,7 @@ export class ColCalDates extends LitElement {
             const isDisabled = this.isDateDisabled(date);
             return html`
               <button
-.dataTestid="${`${this.dataTestid}-Day`}"
+                data-testid="${`${this.dataTestid}-Day`}"
                 class="day ${isSelected && !isDisabled
                   ? "selected"
                   : ""} ${isDisabled ? "disabled" : ""}"

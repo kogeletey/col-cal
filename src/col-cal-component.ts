@@ -178,34 +178,34 @@ export class ColCal extends LitElement {
           }
         }
       </style>
-      <div class="calendar" .data-testid="${this.dataTestid}">
+      <div class="calendar" data-testid="${this.dataTestid}">
         <col-cal-header
           .date=${this._date}
           .locale=${this.currentLocale}
           .minDate=${this.minDate}
           .maxDate=${this.maxDate}
-          .data-testid="${`${this.dataTestid}-Header`}"
+          .dataTestid="${`${this.dataTestid}-Header`}"
           @change-month=${({ detail }: { detail: Date }) => {
                 this._date = detail as Date;
             }}
         >
           <div slot="header-date" class="calendar__header-date"
-          .data-testid="${`${this.dataTestid}-Header-Date`}"
+          data-testid="${`${this.dataTestid}-Header-Date`}"
               >
             <button id="${this._monthsButtonId}" class="popup"
-          .data-testid="${`${this.dataTestid}-Months`}"
+          data-testid="${`${this.dataTestid}-Months`}"
                   >
               ${getMonths(this.currentLocale).at(this._date.getMonth())}
               <div name="months-popup-icon"
-          .data-testid="${`${this.dataTestid}-MonthsIcon`}"
+          data-testid="${`${this.dataTestid}-MonthsIcon`}"
                       ></div>
             </button>
             <button id="${this._yearsButtonId}" class="popup"
-          .data-testid="${`${this.dataTestid}-Years`}"
+          data-testid="${`${this.dataTestid}-Years`}"
                   >
               ${this._date.getFullYear()}
               <div name="years-popup-icon"
-          .data-testid="${`${this.dataTestid}-YearsIcon`}"
+                data-testid="${`${this.dataTestid}-YearsIcon`}"
                       ></div>
             </button>
           </div>
@@ -213,7 +213,7 @@ export class ColCal extends LitElement {
             part="icon-button"
             name="icon-left-button"
             slot="icon-left-button"
-          .data-testid="${`${this.dataTestid}-IconsLeftYear`}"
+            data-testid="${`${this.dataTestid}-IconsLeftYear`}"
           >
             &lt;
           </div>
@@ -221,7 +221,7 @@ export class ColCal extends LitElement {
             part="icon-button"
             name="icon-right-button"
             slot="icon-right-button"
-          .data-testid="${`${this.dataTestid}-IconsRightYear`}"
+            data-testid="${`${this.dataTestid}-IconsRightYear`}"
           >
             &gt;
           </div>
@@ -231,12 +231,12 @@ export class ColCal extends LitElement {
           ${ref(this.popoverMonthsRef)}
           position="bottom"
           for="${this._monthsButtonId}"
-          .data-testid="${`${this.dataTestid}-Popover-Months`}"
+          data-testid="${`${this.dataTestid}-Popover-Months`}"
           @wa-show="${this.handleMonthsChange}"
           @wa-after-hide="${this.handleMonthsHideChange}"
         >
           <col-cal-months
-            .data-testid="${`${this.dataTestid}-Months`}"
+            dataTestid="${`${this.dataTestid}-Months`}"
             .year="${this._date.getFullYear()}"
             .selectedMonth=${this._date.getMonth()}
             .minMonth=${this.minDate}
@@ -249,12 +249,12 @@ export class ColCal extends LitElement {
           ${ref(this.popoverYearsRef)}
           position="bottom"
           for="${this._yearsButtonId}"
-          .data-testid="${`${this.dataTestid}-Popover-Years`}"
+          data-testid="${`${this.dataTestid}-Popover-Years`}"
           @wa-show="${this.handleYearsChange}"
           @wa-after-hide="${this.handleYearsHideChange}"
         >
           <col-cal-years
-            .data-testid="${`${this.dataTestid}-Years`}"
+            .dataTestid="${`${this.dataTestid}-Years`}"
             .selectedYear=${this._date.getFullYear()}
             .minYear=${this.minDate?.getFullYear()}
             .maxYear=${this.maxDate?.getFullYear()}
@@ -264,7 +264,7 @@ export class ColCal extends LitElement {
               part="years-arrow-icon"
               slot="icon-left-button"
               name="years-icon-left"
-            .data-testid="${`${this.dataTestid}-LeftButton`}"
+              data-testid="${`${this.dataTestid}-LeftButton`}"
             >
               &lt;
             </div>
@@ -272,7 +272,7 @@ export class ColCal extends LitElement {
               part="years-arrow-icon"
               slot="icon-right-button"
               name="years-icon-right"
-            .data-testid="${`${this.dataTestid}-RightButton`}"
+              data-testid="${`${this.dataTestid}-RightButton`}"
             >
               &gt;
             </div>
@@ -280,7 +280,7 @@ export class ColCal extends LitElement {
         </wa-popover>
 
         <col-cal-dates
-            .data-testid="${`${this.dataTestid}-Dates`}"
+          .dataTestid="${`${this.dataTestid}-Dates`}"
           .month=${this._date}
           .minDate=${this.minDate}
           .maxDate=${this.maxDate}
