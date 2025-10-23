@@ -9,6 +9,7 @@ export class ColCalYears extends LitElement {
   @property({ type: Object }) maxYear: number | null = null;
 
   @property({ type: Array }) disabledYears: number[] = [];
+  @property({ type: String }) dataTestid: string = "ColCal-Years";
 
   @state()
   private _startYear: number = 2005;
@@ -144,21 +145,36 @@ export class ColCalYears extends LitElement {
 
   protected render() {
     return html`
-      <div class="year-grid">
-        <div class="navigation">
-          <button @click=${this.handlePrev}>
-            <slot name="icon-left-button"> &lt; </slot>
+      <div class="year-grid"
+              .dataTestid="${`${this.dataTestid}-Grid`}"
+      >
+        <div class="navigation"
+              .dataTestid="${`${this.dataTestid}-Navigation`}"
+          >
+          <button @click=${this.handlePrev}
+              .dataTestid="${`${this.dataTestid}-Button-Prev`}"
+              >
+            <slot name="icon-left-button"
+              .dataTestid="${`${this.dataTestid}-Button-Left`}"
+                  > &lt; </slot>
           </button>
 
-          <button @click=${this.handleNext}>
-            <slot name="icon-right-button"> &gt; </slot>
+          <button @click=${this.handleNext}
+              .dataTestid="${`${this.dataTestid}-Button-Next`}"
+              >
+            <slot name="icon-right-button"
+              .dataTestid="${`${this.dataTestid}-Button-NextIcon`}"
+                  > &gt; </slot>
           </button>
         </div>
 
-        <div class="years">
+        <div class="years"
+              .dataTestid="${`${this.dataTestid}`}"
+          >
           ${this.fullYears.map(
             (year) =>
               html`<div
+              .dataTestid="${`${this.dataTestid}-YearCell`}"
                 class="year-cell ${this.isSelectedYear(year) ? "selected" : ""}
                ${this.isYearDisabled(Number(year)) && !this.isSelectedYear(year)
                   ? "disabled"

@@ -14,6 +14,7 @@ export class ColCalMonths extends LitElement {
   @property({ type: Object }) maxMonth: Date | null = null;
 
   @property({ type: String }) locale: string = "en-US";
+  @property({ type: String }) dataTestid: string = "ColCal-Months";
 
   static get styles() {
     return css`
@@ -106,12 +107,15 @@ export class ColCalMonths extends LitElement {
 
   protected render() {
     return html`
-      <div class="month-grid" part="months">
+      <div class="month-grid" part="months"
+          .dataTestid="${`${this.dataTestid}-Months`}"
+      >
         ${getMonths(this.locale).map(
           (month: string) =>
             html`<div
+              .dataTestid="${`${this.dataTestid}-Months-Cell`}"
               part="month"
-              class="month-cell
+              class="month-cell"
               ${this.isSelected(month) ? "selected" : ""}
               ${this.isDisabled(month) && !this.isSelected(month)
                 ? "disabled"

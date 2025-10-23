@@ -1,9 +1,8 @@
-import { LitElement, html, css } from "lit";
+import { addMonths, format, isAfter, isBefore, subMonths } from "date-fns";
+import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { format, subMonths, addMonths } from "date-fns";
-import { LocaleUtils } from "./locale.utils";
-import { isAfter, isBefore } from "date-fns";
 import { getWeeks } from "./date.utils";
+import { LocaleUtils } from "./locale.utils";
 
 @customElement("col-cal-header")
 export class ColCalHeader extends LitElement {
@@ -54,6 +53,7 @@ export class ColCalHeader extends LitElement {
     }
   `;
   @property({ type: String }) locale: string = "en-US";
+  @property({ type: String }) dataTestid: string = "ColCal-Header";
   @property({ type: Object }) date: Date | null = null;
 
   @property({ type: Object }) minDate: Date | null = null;
@@ -106,41 +106,57 @@ export class ColCalHeader extends LitElement {
 
   render() {
     return html`
-      <div class="header" part="header">
-        <slot class="header__date" name="header-date" part="header-date">
+      <div class="header" part="header"
+        .data-testid="${this.dataTestid}"
+      >
+        <slot class="header__date" name="header-date" part="header-date"
+        .data-testid="${`${this.dataTestid}-HeaderDate`}"
+          >
           ${format(this._date, "MMMM yyyy", {
             locale: new LocaleUtils(this.locale).currentLocale(),
           })}
         </slot>
-        <div class="header__buttons">
+        <div class="header__buttons"
+        .data-testid="${`${this.dataTestid}-Header-Buttons`}"
+          >
           <button
             part="left-button"
             class="left-button"
             ?disabled="${this.isDateMinDisabled(this.date)}"
+        .data-testid="${`${this.dataTestid}-Header-LeftButton`}"
             @click=${() => {
               this._date = subMonths(this._date, 1);
               this.handleChangeMonth();
             }}
           >
-            <slot name="icon-left-button"> &lt; </slot>
+            <slot name="icon-left-button"
+        .data-testid="${`${this.dataTestid}-Header-IconLeftButton`}"
+                  > &lt; </slot>
           </button>
           <button
             class="right-button"
             part="right-button"
+        .data-testid="${`${this.dataTestid}-Header-IconRightButton`}"
             ?disabled="${this.isDateMaxDisabled(this.date)}"
             @click=${() => {
               this._date = addMonths(this._date, 1);
               this.handleChangeMonth();
             }}
           >
-            <slot name="icon-right-button"> &gt; </slot>
+            <slot name="icon-right-button"
+        .data-testid="${`${this.dataTestid}-Header-IconRight`}"
+                  > &gt; </slot>
           </button>
         </div>
       </div>
 
-      <div class="week">
+      <div class="week"
+        .data-testid="${`${this.dataTestid}-Header-Week`}"
+      >
         ${getWeeks(this.locale).map(
-          (dayWeek) => html`<span class="day-header">${dayWeek}</span>`,
+          (dayWeek) => html`<span class="day-header"
+        .data-testid="${`${this.dataTestid}-Header-DayHeader`}"
+          >${dayWeek}</span>`,
         )}
       </div>
     `;
