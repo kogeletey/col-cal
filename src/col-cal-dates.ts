@@ -29,6 +29,7 @@ export class ColCalDates extends LitElement {
   @property({ type: Date })
   selectedDate: Date | null = null;
 
+  @property({ type: String }) dataTestid: string = "Dates";
   @property({ type: String }) locale: string = "en-US";
   @property({ type: Number }) firstDayOfWeek: Day = 1;
   @property({ type: Array }) disabledDates: Date[] = [];
@@ -179,7 +180,7 @@ export class ColCalDates extends LitElement {
     const days = this.getMonthDays();
     if (days) {
       return html`
-        <div class="week">
+        <div class="week" data-testid="${this.dataTestid}">
           ${days.map((date) => {
             const isSelected =
               isSameMonth(date, this.selectedDate as Date) &&
@@ -188,6 +189,7 @@ export class ColCalDates extends LitElement {
             const isDisabled = this.isDateDisabled(date);
             return html`
               <button
+                data-testid="${`${this.dataTestid}-Day`}"
                 class="day ${isSelected && !isDisabled
                   ? "selected"
                   : ""} ${isDisabled ? "disabled" : ""}"
