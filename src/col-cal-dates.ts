@@ -190,6 +190,9 @@ export class ColCalDates extends LitElement {
             return html`
               <button
                 data-testid="${`${this.dataTestid}-Day`}"
+                part="day ${isSelected && !isDisabled
+                  ? "selected"
+                  : ""} ${isDisabled ? "disabled" : ""}"
                 class="day ${isSelected && !isDisabled
                   ? "selected"
                   : ""} ${isDisabled ? "disabled" : ""}"
