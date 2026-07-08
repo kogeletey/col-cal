@@ -189,7 +189,7 @@ export class ColCalYears extends LitElement {
                 part="year ${this.isYearDisabled(Number(year)) &&
                 !this.isSelectedYear(year)
                   ? "disabled"
-                  : ""}"
+                  : ""} ${this.isSelectedYear(year) ? "selected" : ""}"
                 aria-selected=${this.isSelectedYear(year)}
               >
                 ${year}
