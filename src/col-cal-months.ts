@@ -96,9 +96,11 @@ export class ColCalMonths extends LitElement {
   }
 
   private handleMonthSelect(month: string) {
+    const monthIndex = this.getFromIndexMonth(month);
+    this.selectedMonth = monthIndex;
     this.dispatchEvent(
       new CustomEvent("change-month", {
-        detail: { month: this.getFromIndexMonth(month) },
+        detail: { month: monthIndex },
         bubbles: true,
         composed: true,
       }),
@@ -110,29 +112,23 @@ export class ColCalMonths extends LitElement {
       <div class="month-grid" part="months"
           data-testid="${`${this.dataTestid}-Months`}"
       >
-        ${getMonths(this.locale).map(
-          (month: string) =>
-            html`<div
+        ${getMonths(this.locale).map((month: string) => {
+          const isSelected = this.isSelected(month);
+          const isDisabled = this.isDisabled(month);
+          const stateClass = isSelected ? "selected" : isDisabled ? "disabled" : "";
+
+          return html`<div
               data-testid="${`${this.dataTestid}-Months-Cell`}"
-              part="month"
-              class="month-cell"
-              ${this.isSelected(month) ? "selected" : ""}
-              ${this.isDisabled(month) && !this.isSelected(month)
-                ? "disabled"
-                : ""}
-              "
+              part="month ${stateClass}"
+              class="month-cell ${stateClass}"
               @click=${() => {
-                if (!this.isDisabled(month)) this.handleMonthSelect(month);
+                if (!isDisabled) this.handleMonthSelect(month);
               }}
-              aria-selected=${this.isSelected(month)}
-              part="month ${this.isDisabled(month) && !this.isSelected(month)
-                ? "disabled"
-                : ""}
-            "
+              aria-selected=${isSelected}
             >
               ${month}
-            </div>`,
-        )}
+            </div>`;
+        })}
       </div>
     `;
   }
