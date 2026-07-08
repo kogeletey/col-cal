@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { LitElement, html, type PropertyValues } from "lit";
 import { property, state, customElement } from "lit/decorators.js";
 import "@awesome.me/webawesome/dist/components/popover/popover.js";
 import "./col-cal-header.ts";
@@ -27,6 +27,11 @@ export class ColCal extends LitElement {
     private _date: Date = this.date;
     private _monthsButtonId: string = "open-months-popup";
     private _yearsButtonId: string = "open-years-popup";
+    private _isMonthsOpen: boolean = false;
+    private _isYearsOpen: boolean = false;
+    private _dateGridMinDate: Date | null = null;
+    private _dateGridMaxDate: Date | null = null;
+    private _isDateGridBoundsInitialized: boolean = false;
 
     private popoverYearsRef: Ref<HTMLElement> = createRef();
     private popoverMonthsRef: Ref<HTMLElement> = createRef();
@@ -37,6 +42,28 @@ export class ColCal extends LitElement {
 
     protected createRenderRoot(): HTMLElement | DocumentFragment {
         return this;
+    }
+
+    private get isSelectorOpen(): boolean {
+        return this._isMonthsOpen || this._isYearsOpen;
+    }
+
+    private get dateGridMinDate(): Date | null {
+        return this._isDateGridBoundsInitialized
+            ? this._dateGridMinDate
+            : this.minDate;
+    }
+
+    private get dateGridMaxDate(): Date | null {
+        return this._isDateGridBoundsInitialized
+            ? this._dateGridMaxDate
+            : this.maxDate;
+    }
+
+    private syncDateGridBounds(): void {
+        this._dateGridMinDate = this.minDate;
+        this._dateGridMaxDate = this.maxDate;
+        this._isDateGridBoundsInitialized = true;
     }
 
     private generateUniqueButtonId(prefix: string) {
@@ -73,6 +100,17 @@ export class ColCal extends LitElement {
         });
     }
 
+    protected willUpdate(changedProperties: PropertyValues<this>): void {
+        if (
+            !this.isSelectorOpen &&
+            (!this._isDateGridBoundsInitialized ||
+                changedProperties.has("minDate") ||
+                changedProperties.has("maxDate"))
+        ) {
+            this.syncDateGridBounds();
+        }
+    }
+
     private handleChangeMonth({ detail }: { detail: { month: MonthNumber } }) {
         this._date = createDateFromMonthNumber(
             detail.month,
@@ -92,6 +130,11 @@ export class ColCal extends LitElement {
     }
 
     private handleMonthsChange() {
+        const wasSelectorOpen = this.isSelectorOpen;
+        this._isMonthsOpen = true;
+        this._isYearsOpen = false;
+        if (!wasSelectorOpen) this.syncDateGridBounds();
+
         this.dispatchEvent(
             new CustomEvent("show-months", {
                 bubbles: true,
@@ -101,6 +144,11 @@ export class ColCal extends LitElement {
     }
 
     private handleYearsChange() {
+        const wasSelectorOpen = this.isSelectorOpen;
+        this._isYearsOpen = true;
+        this._isMonthsOpen = false;
+        if (!wasSelectorOpen) this.syncDateGridBounds();
+
         this.dispatchEvent(
             new CustomEvent("show-years", {
                 bubbles: true,
@@ -110,6 +158,8 @@ export class ColCal extends LitElement {
     }
 
     private handleYearsHideChange() {
+        this._isYearsOpen = false;
+
         this.dispatchEvent(
             new CustomEvent("hide-years", {
                 bubbles: true,
@@ -119,6 +169,8 @@ export class ColCal extends LitElement {
     }
 
     private handleMonthsHideChange() {
+        this._isMonthsOpen = false;
+
         this.dispatchEvent(
             new CustomEvent("hide-months", {
                 bubbles: true,
@@ -282,8 +334,8 @@ export class ColCal extends LitElement {
         <col-cal-dates
           .dataTestid="${`${this.dataTestid}-Dates`}"
           .month=${this._date}
-          .minDate=${this.minDate}
-          .maxDate=${this.maxDate}
+          .minDate=${this.dateGridMinDate}
+          .maxDate=${this.dateGridMaxDate}
           .selectedDate=${this.date}
           .locale=${this.currentLocale}
           .firstDayOfWeek=${this.firstDayOfWeek}

@@ -2,7 +2,7 @@ import { LitElement, html, css } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import type { MonthNumber } from "./col-cal.type.ts";
 import { getMonths } from "./date.utils.ts";
-import { isAfter, isBefore } from "date-fns";
+import { endOfMonth, isAfter, isBefore } from "date-fns";
 
 @customElement("col-cal-months")
 export class ColCalMonths extends LitElement {
@@ -76,18 +76,17 @@ export class ColCalMonths extends LitElement {
 
   private isDisabled(month: string): boolean {
     const monthIndex = this.getFromIndexMonth(month);
-    if (this.minMonth) {
-      const monthDate = new Date(this.year, monthIndex, this.minMonth.getDay());
+    const monthStart = new Date(this.year, monthIndex, 1);
+    const monthEnd = endOfMonth(monthStart);
 
-      if (isBefore(monthDate, this.minMonth)) {
+    if (this.minMonth) {
+      if (isBefore(monthEnd, this.minMonth)) {
         return true;
       }
     }
 
     if (this.maxMonth) {
-      const monthDate = new Date(this.year, monthIndex, this.maxMonth.getDay());
-
-      if (isAfter(monthDate, this.maxMonth)) {
+      if (isAfter(monthStart, this.maxMonth)) {
         return true;
       }
     }
