@@ -1,6 +1,9 @@
 {
-  "name": "col-cal",
-  "version": "2.0.0-alpha.1",
+  "name": "@pksep/col-cal",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "1.0.1",
   "type": "module",
   "main": "./dist/col-cal.js",
   "scripts": {

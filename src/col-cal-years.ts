@@ -146,9 +146,11 @@ export class ColCalYears extends LitElement {
   protected render() {
     return html`
       <div class="year-grid"
+      part="years"
               data-testid="${`${this.dataTestid}-Grid`}"
       >
         <div class="navigation"
+      part="navigation"
               data-testid="${`${this.dataTestid}-Navigation`}"
           >
           <button @click=${this.handlePrev}
